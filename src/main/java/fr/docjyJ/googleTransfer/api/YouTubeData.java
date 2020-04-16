@@ -17,7 +17,7 @@ public class YouTubeData {
                 .execute();
         for( Video value : request.getItems()) {
             clientB.videos().rate(value.getId(), type ).execute();
-            //
+            //A Delete
             System.out.print(value.getId());
             clientA.videos().rate(value.getId(), "none").execute();
         }
