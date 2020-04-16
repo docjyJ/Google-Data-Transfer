@@ -41,7 +41,9 @@ public class GoogleOauth {
         return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
     }
 
-    public static YouTube getService() throws GeneralSecurityException, IOException {
+    public static YouTube getService(String info) throws GeneralSecurityException, IOException, InterruptedException {
+        System.out.println(info);
+        Thread.sleep(5000);
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         Credential credential = authorize(httpTransport);
         return new YouTube.Builder(httpTransport, JSON_FACTORY, credential)
