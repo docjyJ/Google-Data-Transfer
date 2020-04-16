@@ -27,19 +27,15 @@ public class Main {
         }
     }
 
-    public static void print(Object str){
-        System.out.println(str);
-    }
-
     public static void main(String[] args)
             throws GeneralSecurityException, IOException, InterruptedException {
         YouTube compteA = getService(Lang.FIRST_STEP);
         YouTube compteB = getService(Lang.SECOND_STEP);
 
         if(question(Lang.ASK_LIKED))
-            transferLike(compteA,compteB,"like","");
+            transferLike(compteA,compteB,"","like");
         if(question(Lang.ASK_DISLIKED))
-            transferLike(compteA,compteB,"dislike","");
+            transferLike(compteA,compteB,"","dislike");
 
 
     }
