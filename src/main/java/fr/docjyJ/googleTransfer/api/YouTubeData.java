@@ -1,5 +1,6 @@
 package fr.docjyJ.googleTransfer.api;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;
 
@@ -16,13 +17,19 @@ public class YouTubeData {
                 .setMyRating(type)
                 .execute();
         for( Video value : request.getItems()) {
-            clientB.videos().rate(value.getId(), type ).execute();
-            //A Delete
-            System.out.print(value.getId());
-            clientA.videos().rate(value.getId(), "none").execute();
+            try {
+                clientB.videos().rate(value.getId(), type).execute();
+                //A Delete
+                System.out.print(value.getId());
+                clientA.videos().rate(value.getId(), "none").execute();
+            }
+            catch (GoogleJsonResponseException e){
+                System.out.println();
+                System.out.println(e.toString());
+            }
         }
-        if(!request.getNextPageToken().isEmpty()){
-            transferLike(clientA, clientB, type, request.getNextPageToken());
+        if(request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()){
+            transferLike(clientA, clientB, request.getNextPageToken(), type);
         }
     }
 
@@ -37,7 +44,7 @@ public class YouTubeData {
             //create playlist
             transferPlaylistItem( clientA, clientB, "", value.getId(),"Null");
         }
-        if(!request.getNextPageToken().isEmpty()){
+        if(request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()){
             transferPlaylist(clientA, clientB, request.getNextPageToken());
         }
     }
@@ -55,10 +62,11 @@ public class YouTubeData {
                         new PlaylistItem().setSnippet(
                                 new PlaylistItemSnippet()
                                         .setPlaylistId(PlaylistIdB)
+                                        .setPosition(value.getSnippet().getPosition())
                                         .setResourceId(value.getSnippet().getResourceId())))
                         .execute();
         }
-        if(!request.getNextPageToken().isEmpty()){
+        if(request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()){
             transferPlaylistItem(clientA, clientB, request.getNextPageToken(), PlaylistIdA, PlaylistIdB);
         }
     }
