@@ -13,7 +13,7 @@ Transfer Google data from one account to another.
 Have a client_secrets.json file for Google OAuth 2.0 with apis :
 - YouTube Data API v3
 - Contacts API
-More information : https://developers.google.com/identity/protocols/oauth2
+> More information : https://developers.google.com/identity/protocols/oauth2
 
 ## Install and Run
 1. Download the project
