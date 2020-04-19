@@ -21,8 +21,8 @@ public class Main {
             transferLike(compteA,compteB,"","dislike");
         if(question("subscriptions"))
             transferSubscriptions(compteA,compteB,"");
-
-
+        if(question("playlist"))
+            transferPlaylist(compteA,compteB,"");
     }
 }
 

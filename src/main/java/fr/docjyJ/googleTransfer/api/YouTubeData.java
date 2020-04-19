@@ -32,17 +32,54 @@ public class YouTubeData {
             transferLike(clientA, clientB, request.getNextPageToken(), type);
         }
     }
-
+    public static void transferSubscriptions(YouTube clientA, YouTube clientB, String pageToken) throws IOException {
+        SubscriptionListResponse request = clientA.subscriptions()
+                .list("snippet")
+                .setMaxResults(50L)
+                .setPageToken(pageToken)
+                .setMine(true)
+                .execute();
+        for( Subscription value : request.getItems()) {
+            try {
+                systemLog(value.getId());
+                clientB.subscriptions().insert("snippet",
+                        new Subscription().setSnippet(
+                                new SubscriptionSnippet()
+                                        .setResourceId(value.getSnippet().getResourceId())))
+                        .execute();
+            }
+            catch (GoogleJsonResponseException e){
+                systemLogError(e);
+            }
+        }
+        if(request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()){
+            transferSubscriptions(clientA, clientB, request.getNextPageToken());
+        }
+    }
     public static void transferPlaylist(YouTube clientA, YouTube clientB, String pageToken) throws IOException {
         PlaylistListResponse request = clientA.playlists()
-                .list("id")
+                .list("id,snippet,contentDetails")
                 .setMaxResults(50L)
                 .setPageToken(pageToken)
                 .setMine(true)
                 .execute();
         for( Playlist value : request.getItems()) {
-            //create playlist
-            transferPlaylistItem( clientA, clientB, "", value.getId(),"Null");
+            try {
+                transferPlaylistItem( clientA, clientB, "", value.getId(),
+                        clientB.playlists().insert("snippet,status",
+                                new Playlist()
+                                        .setSnippet(new PlaylistSnippet()
+                                                .setDefaultLanguage(value.getSnippet().getDefaultLanguage())
+                                                .setDescription(value.getSnippet().getDescription())
+                                                .setTags(value.getSnippet().getTags())
+                                                .setTitle(value.getSnippet().getTitle()))
+                                        .setStatus(new PlaylistStatus()
+                                                .setPrivacyStatus(value.getStatus().getPrivacyStatus())))
+                                .execute().getId());
+            }
+            catch (GoogleJsonResponseException e){
+                systemLogError(e);
+            }
         }
         if(request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()){
             transferPlaylist(clientA, clientB, request.getNextPageToken());
@@ -76,28 +113,5 @@ public class YouTubeData {
             transferPlaylistItem(clientA, clientB, request.getNextPageToken(), PlaylistIdA, PlaylistIdB);
         }
     }
-    public static void transferSubscriptions(YouTube clientA, YouTube clientB, String pageToken) throws IOException {
-        SubscriptionListResponse request = clientA.subscriptions()
-                .list("snippet")
-                .setMaxResults(50L)
-                .setPageToken(pageToken)
-                .setMine(true)
-                .execute();
-        for( Subscription value : request.getItems()) {
-            try {
-                systemLog(value.getId());
-                clientB.subscriptions().insert("snippet",
-                        new Subscription().setSnippet(
-                                new SubscriptionSnippet()
-                                        .setResourceId(value.getSnippet().getResourceId())))
-                        .execute();
-            }
-            catch (GoogleJsonResponseException e){
-                systemLogError(e);
-            }
-        }
-        if(request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()){
-            transferSubscriptions(clientA, clientB, request.getNextPageToken());
-        }
-    }
+
 }
