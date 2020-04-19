@@ -10,14 +10,14 @@ public class Lang {
     public static final String SECOND_STEP = "Then we will connect to the account that will receive the data.";
     public static final String ASK_LIKED = "Do you want to transfer liked videos? " + YES_NO;
     public static final String ASK_DISLIKED = "Do you want to transfer disliked videos? " + YES_NO;
-    public static final String ASK_SUBSCRIPTION = "Do you want to transfer subscribed channels?" + YES_NO;
-    public static final String ASK_PLAYLIST = "Do you want to transfer playlists?" + YES_NO;
+    public static final String ASK_SUBSCRIPTION = "Do you want to transfer subscribed channels? " + YES_NO;
+    public static final String ASK_PLAYLIST = "Do you want to transfer playlists? " + YES_NO;
     public static final String ASK_ERROR = "Do you want to continue? " + YES_NO;
     public static final String BAD_ANSWER ="Sorry, I didn't catch that. Please answer " + YES + "/" + NO;
     public static final String PREFIX_INFO ="[INFO]: ";
     public static final String PREFIX_ERROR ="[ERROR]: ";
 
-    private static final Scanner scan = new Scanner(System.in);
+    private static final Scanner SCANNER = new Scanner(System.in);
 
     public static boolean question(String code){
         String answer;
@@ -38,9 +38,8 @@ public class Lang {
                 systemLog(ASK_PLAYLIST);
                 break;
         }
-
         while (true) {
-            answer = scan.nextLine().trim().toLowerCase();
+            answer = SCANNER.nextLine().trim().toLowerCase();
             if (answer.equals(YES)) {
                 return true;
             } else if (answer.equals(NO)) {
