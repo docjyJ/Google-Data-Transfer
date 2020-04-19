@@ -6,6 +6,9 @@ import com.google.api.services.youtube.model.*;
 
 import java.io.IOException;
 
+import static fr.docjyJ.googleTransfer.Lang.systemLog;
+import static fr.docjyJ.googleTransfer.Lang.systemLogError;
+
 public class YouTubeData {
     public static void transferLike(YouTube clientA, YouTube clientB, String pageToken,
                                     String type) throws IOException {
@@ -18,14 +21,11 @@ public class YouTubeData {
                 .execute();
         for( Video value : request.getItems()) {
             try {
+                systemLog(value.getId());
                 clientB.videos().rate(value.getId(), type).execute();
-                //A Delete
-                System.out.print(value.getId());
-                clientA.videos().rate(value.getId(), "none").execute();
             }
             catch (GoogleJsonResponseException e){
-                System.out.println();
-                System.out.println(e.toString());
+                systemLogError(e);
             }
         }
         if(request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()){
@@ -58,6 +58,8 @@ public class YouTubeData {
                 .setPageToken(pageToken)
                 .execute();
         for( PlaylistItem value : request.getItems()) {
+            try {
+                systemLog(value.getId());
                 clientB.playlistItems().insert("snippet",
                         new PlaylistItem().setSnippet(
                                 new PlaylistItemSnippet()
@@ -65,9 +67,37 @@ public class YouTubeData {
                                         .setPosition(value.getSnippet().getPosition())
                                         .setResourceId(value.getSnippet().getResourceId())))
                         .execute();
+            }
+            catch (GoogleJsonResponseException e){
+                systemLogError(e);
+            }
         }
         if(request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()){
             transferPlaylistItem(clientA, clientB, request.getNextPageToken(), PlaylistIdA, PlaylistIdB);
+        }
+    }
+    public static void transferSubscriptions(YouTube clientA, YouTube clientB, String pageToken) throws IOException {
+        SubscriptionListResponse request = clientA.subscriptions()
+                .list("snippet")
+                .setMaxResults(50L)
+                .setPageToken(pageToken)
+                .setMine(true)
+                .execute();
+        for( Subscription value : request.getItems()) {
+            try {
+                systemLog(value.getId());
+                clientB.subscriptions().insert("snippet",
+                        new Subscription().setSnippet(
+                                new SubscriptionSnippet()
+                                        .setResourceId(value.getSnippet().getResourceId())))
+                        .execute();
+            }
+            catch (GoogleJsonResponseException e){
+                systemLogError(e);
+            }
+        }
+        if(request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()){
+            transferSubscriptions(clientA, clientB, request.getNextPageToken());
         }
     }
 }

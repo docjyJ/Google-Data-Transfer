@@ -18,6 +18,8 @@ import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Collections;
 
+import static fr.docjyJ.googleTransfer.Lang.systemLog;
+
 public class GoogleOauth {
     private static final String CLIENT_SECRETS= "client_secret.json";
     private static final Collection<String> SCOPES =
@@ -42,7 +44,7 @@ public class GoogleOauth {
     }
 
     public static YouTube getService(String info) throws GeneralSecurityException, IOException, InterruptedException {
-        System.out.println(info);
+        systemLog(info);
         Thread.sleep(5000);
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         Credential credential = authorize(httpTransport);
