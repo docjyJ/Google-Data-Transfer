@@ -1,28 +1,26 @@
 package fr.docjyJ.googleTransfer;
 
-import com.google.api.services.youtube.YouTube;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import fr.docjyJ.googleTransfer.api.GoogleOauth;
 
 import static fr.docjyJ.googleTransfer.Lang.question;
-import static fr.docjyJ.googleTransfer.api.GoogleOauth.*;
+import static fr.docjyJ.googleTransfer.api.ContactsData.transferContacts;
+import static fr.docjyJ.googleTransfer.api.GoogleOauth.getService;
 import static fr.docjyJ.googleTransfer.api.YouTubeData.*;
 
 public class Main {
-    public static void main(String[] args)
-            throws GeneralSecurityException, IOException, InterruptedException {
-        YouTube compteA = getService(Lang.FIRST_STEP);
-        YouTube compteB = getService(Lang.SECOND_STEP);
-
+    public static void main(String[] args) throws Exception {
+        GoogleOauth.Service compteA = getService(Lang.FIRST_STEP);
+        GoogleOauth.Service compteB = getService(Lang.SECOND_STEP);
         if(question("like"))
-            transferLike(compteA,compteB,"","like");
+            transferLike(compteA.getYoutubeService(),compteB.getYoutubeService(),"","like");
         if(question("dislike"))
-            transferLike(compteA,compteB,"","dislike");
+            transferLike(compteA.getYoutubeService(),compteB.getYoutubeService(),"","dislike");
         if(question("subscriptions"))
-            transferSubscriptions(compteA,compteB,"");
+            transferSubscriptions(compteA.getYoutubeService(),compteB.getYoutubeService(),"");
         if(question("playlist"))
-            transferPlaylist(compteA,compteB,"");
+            transferPlaylist(compteA.getYoutubeService(),compteB.getYoutubeService(),"");
+        if(question("contacts"))
+            transferContacts(compteA.getContactsService(),compteB.getContactsService());
     }
 }
 

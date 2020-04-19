@@ -8,10 +8,11 @@ public class Lang {
     public static final String YES_NO = "(" + YES + "/" + NO + ")";
     public static final String FIRST_STEP = "First we will connect to the account that contains the data.";
     public static final String SECOND_STEP = "Then we will connect to the account that will receive the data.";
-    public static final String ASK_LIKED = "Do you want to transfer liked videos? " + YES_NO;
-    public static final String ASK_DISLIKED = "Do you want to transfer disliked videos? " + YES_NO;
-    public static final String ASK_SUBSCRIPTION = "Do you want to transfer subscribed channels? " + YES_NO;
-    public static final String ASK_PLAYLIST = "Do you want to transfer playlists? " + YES_NO;
+    public static final String ASK_LIKED = "Do you want to transfer YouTube liked videos? " + YES_NO;
+    public static final String ASK_DISLIKED = "Do you want to transfer YouTube disliked videos? " + YES_NO;
+    public static final String ASK_SUBSCRIPTION = "Do you want to transfer YouTube subscribed channels? " + YES_NO;
+    public static final String ASK_PLAYLIST = "Do you want to transfer YouTube playlists? " + YES_NO;
+    public static final String ASK_CONTACTS = "Do you want to transfer Google contacts? " + YES_NO;
     public static final String ASK_ERROR = "Do you want to continue? " + YES_NO;
     public static final String BAD_ANSWER ="Sorry, I didn't catch that. Please answer " + YES + "/" + NO;
     public static final String PREFIX_INFO ="[INFO]: ";
@@ -37,6 +38,9 @@ public class Lang {
             case "playlist":
                 systemLog(ASK_PLAYLIST);
                 break;
+            case "contacts":
+                systemLog(ASK_CONTACTS);
+                break;
         }
         while (true) {
             answer = SCANNER.nextLine().trim().toLowerCase();
@@ -55,6 +59,6 @@ public class Lang {
     public static void systemLogError(Object message){
         System.out.println(PREFIX_ERROR + message.toString());
         if(!question("error"))
-            System.exit(1);
+            System.exit(0);
     }
 }
