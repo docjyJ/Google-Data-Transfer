@@ -10,6 +10,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
+import com.google.api.services.calendar.Calendar;
 import com.google.gdata.client.contacts.ContactsService;
 
 import java.io.InputStream;
@@ -22,27 +23,46 @@ import static fr.docjyJ.googleTransfer.Lang.systemLog;
 public class GoogleOauth {
     private static final String CLIENT_SECRETS= "client_secret.json";
     private static final Collection<String> SCOPES = List.of(
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+            "https://www.googleapis.com/auth/youtube",
+            "https://www.googleapis.com/auth/calendar",
+            /*"https://www.googleapis.com/auth/drive",
+            "https://www.googleapis.com/auth/photoslibrary",
+            "https://www.googleapis.com/auth/gmail.settings.basic",
+            "https://www.googleapis.com/auth/fitness.activity.write",
+            "https://www.googleapis.com/auth/fitness.blood_glucose.write",
+            "https://www.googleapis.com/auth/fitness.blood_pressure.write",
+            "https://www.googleapis.com/auth/fitness.body.write",
+            "https://www.googleapis.com/auth/fitness.body_temperature.write",
+            "https://www.googleapis.com/auth/fitness.location.write",
+            "https://www.googleapis.com/auth/fitness.nutrition.write",
+            "https://www.googleapis.com/auth/fitness.oxygen_saturation.write",
+            "https://www.googleapis.com/auth/fitness.reproductive_health.write",*/
             "https://www.google.com/m8/feeds/");
 
     private static final String APPLICATION_NAME = "Google Transfer";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     public static class Service{
-        YouTube youtubeService;
         ContactsService contactsService;
+        YouTube youtubeService;
+        Calendar calendarService;
 
-        public Service(YouTube youtubeService, ContactsService contactsService) {
-            this.youtubeService = youtubeService;
+        public Service(ContactsService contactsService, YouTube youtubeService, Calendar calendarService) {
             this.contactsService = contactsService;
+            this.youtubeService = youtubeService;
+            this.calendarService = calendarService;
+        }
+
+        public ContactsService getContactsService() {
+            return contactsService;
         }
 
         public YouTube getYoutubeService() {
             return youtubeService;
         }
 
-        public ContactsService getContactsService() {
-            return contactsService;
+        public Calendar getCalendarService() {
+            return calendarService;
         }
     }
 
@@ -66,16 +86,21 @@ public class GoogleOauth {
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         Credential credential = authorize(httpTransport);
 
-        //Youtube
-        YouTube youtubeService = new YouTube.Builder(httpTransport, JSON_FACTORY, credential)
-                .setApplicationName(APPLICATION_NAME)
-                .build();
-
-        //Google Contacts
+        //Contacts
         ContactsService contactsService = new ContactsService(APPLICATION_NAME);
         contactsService.setOAuth2Credentials(credential);
 
-        return new Service(youtubeService,contactsService);
+        return new Service(contactsService,
+
+                //Youtube
+                new YouTube.Builder(httpTransport, JSON_FACTORY, credential)
+                        .setApplicationName(APPLICATION_NAME)
+                        .build(),
+
+                //Calendar
+                new Calendar.Builder(httpTransport, JSON_FACTORY, credential)
+                        .setApplicationName(APPLICATION_NAME)
+                        .build());
     }
 
 }

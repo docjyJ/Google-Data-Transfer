@@ -11,8 +11,9 @@ public class Lang {
     public static final String ASK_LIKED = "Do you want to transfer YouTube liked videos? " + YES_NO;
     public static final String ASK_DISLIKED = "Do you want to transfer YouTube disliked videos? " + YES_NO;
     public static final String ASK_SUBSCRIPTION = "Do you want to transfer YouTube subscribed channels? " + YES_NO;
-    public static final String ASK_PLAYLIST = "Do you want to transfer YouTube playlists? " + YES_NO;
+    public static final String ASK_PLAYLIST = "Do you want to transfer YouTube playlists? (YouTube channel is required) " + YES_NO;
     public static final String ASK_CONTACTS = "Do you want to transfer Google contacts? " + YES_NO;
+    public static final String ASK_CALENDARS = "Do you want to transfer Google calendars? " + YES_NO;
     public static final String ASK_ERROR = "Do you want to continue? " + YES_NO;
     public static final String BAD_ANSWER ="Sorry, I didn't catch that. Please answer " + YES + "/" + NO;
     public static final String PREFIX_INFO ="[INFO]: ";
@@ -41,6 +42,9 @@ public class Lang {
             case "contacts":
                 systemLog(ASK_CONTACTS);
                 break;
+            case "calendars":
+                systemLog(ASK_CALENDARS);
+
         }
         while (true) {
             answer = SCANNER.nextLine().trim().toLowerCase();

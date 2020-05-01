@@ -2,9 +2,10 @@ package fr.docjyJ.googleTransfer;
 
 import fr.docjyJ.googleTransfer.api.GoogleOauth;
 
-import static fr.docjyJ.googleTransfer.Lang.question;
-import static fr.docjyJ.googleTransfer.api.ContactsData.transferContacts;
-import static fr.docjyJ.googleTransfer.api.GoogleOauth.getService;
+import static fr.docjyJ.googleTransfer.Lang.*;
+import static fr.docjyJ.googleTransfer.api.CalendarData.*;
+import static fr.docjyJ.googleTransfer.api.ContactsData.*;
+import static fr.docjyJ.googleTransfer.api.GoogleOauth.*;
 import static fr.docjyJ.googleTransfer.api.YouTubeData.*;
 
 public class Main {
@@ -21,6 +22,8 @@ public class Main {
             transferPlaylist(compteA.getYoutubeService(),compteB.getYoutubeService(),"");
         if(question("contacts"))
             transferContacts(compteA.getContactsService(),compteB.getContactsService());
+        if(question("calendars"))
+            transferCalendars(compteA.getCalendarService(),compteB.getCalendarService(),"");
     }
 }
 

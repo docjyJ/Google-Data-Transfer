@@ -7,7 +7,10 @@ Transfer Google data from one account to another.
     * disliked videos
     * subscribed channels
     * playlists
-* Google Contacts
+* Google Contacts **(WIP)**
+* Google Calendar
+    * calendar and events 
+    * settings **(WIP)**
 
 ## Prerequisite
 Have a client_secrets.json file for Google OAuth 2.0 with apis :
