@@ -58,7 +58,7 @@ public class YouTubeData {
     }
     public static void transferPlaylist(YouTube clientA, YouTube clientB, String pageToken) throws IOException {
         PlaylistListResponse request = clientA.playlists()
-                .list("id,snippet,contentDetails")
+                .list("id,snippet,status")
                 .setMaxResults(50L)
                 .setPageToken(pageToken)
                 .setMine(true)
