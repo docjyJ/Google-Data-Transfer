@@ -21,18 +21,9 @@ public class GoogleTransfer {
     protected static final Collection<String> SCOPES = List.of(
             "https://www.googleapis.com/auth/youtube",
             "https://www.googleapis.com/auth/calendar",
-            /*"https://www.googleapis.com/auth/drive",
+            "https://www.googleapis.com/auth/drive",
             "https://www.googleapis.com/auth/photoslibrary",
             "https://www.googleapis.com/auth/gmail.settings.basic",
-            "https://www.googleapis.com/auth/fitness.activity.write",
-            "https://www.googleapis.com/auth/fitness.blood_glucose.write",
-            "https://www.googleapis.com/auth/fitness.blood_pressure.write",
-            "https://www.googleapis.com/auth/fitness.body.write",
-            "https://www.googleapis.com/auth/fitness.body_temperature.write",
-            "https://www.googleapis.com/auth/fitness.location.write",
-            "https://www.googleapis.com/auth/fitness.nutrition.write",
-            "https://www.googleapis.com/auth/fitness.oxygen_saturation.write",
-            "https://www.googleapis.com/auth/fitness.reproductive_health.write",*/
             "https://www.google.com/m8/feeds/");
 
     transient File file;

@@ -8,10 +8,14 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.services.calendar.Calendar;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.gmail.Gmail;
 import com.google.api.services.youtube.YouTube;
 import com.google.gdata.client.contacts.ContactsService;
 import fr.docjyJ.googleTransfer.Services.calendar.CalendarElement;
 import fr.docjyJ.googleTransfer.Services.contact.ContactElement;
+import fr.docjyJ.googleTransfer.Services.drive.DriveElement;
+import fr.docjyJ.googleTransfer.Services.gmail.GmailElement;
 import fr.docjyJ.googleTransfer.Services.youtube.YoutubeElement;
 
 import java.io.InputStreamReader;
@@ -23,6 +27,8 @@ public class Service extends GoogleTransfer {
     ContactElement contacts;
     YoutubeElement youtube;
     CalendarElement calendar;
+    GmailElement gmail;
+    DriveElement drive;
 
     //CONSTRUCTOR
     public Service() throws Exception {
@@ -52,6 +58,16 @@ public class Service extends GoogleTransfer {
         this.calendar = new CalendarElement(new Calendar.Builder(httpTransport, JSON_FACTORY, this.credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build());
+
+        //Gmail
+        this.gmail = new GmailElement(new Gmail.Builder(httpTransport, JSON_FACTORY, this.credential)
+                .setApplicationName(APPLICATION_NAME)
+                .build());
+
+        //Drive
+        this.drive = new DriveElement(new Drive.Builder(httpTransport, JSON_FACTORY, this.credential)
+                .setApplicationName(APPLICATION_NAME)
+                .build());
     }
 
     //READ
@@ -59,6 +75,8 @@ public class Service extends GoogleTransfer {
         this.calendar = this.calendar.readAll();
         this.youtube = this.youtube.readAll();
         this.contacts = this.contacts.readAll();
+        this.gmail = this.gmail.readAll();
+        this.drive = this.drive.readAll();
         return this;
     }
 
@@ -67,6 +85,8 @@ public class Service extends GoogleTransfer {
         contacts.putAll(newClient.getContactService());
         youtube.putAll(newClient.getYoutubeService());
         calendar.putAll(newClient.getCalendarService());
+        gmail.putAll(newClient.getGmailService());
+        drive.putAll(newClient.getDriveService());
         return this;
     }
 
@@ -80,6 +100,12 @@ public class Service extends GoogleTransfer {
     public YouTube getYoutubeService(){
         return youtube.getService();
     }
+    public Gmail getGmailService(){
+        return gmail.getService();
+    }
+    public Drive getDriveService(){
+        return drive.getService();
+    }
     public Credential getCredential() {
         return credential;
     }
@@ -91,5 +117,11 @@ public class Service extends GoogleTransfer {
     }
     public CalendarElement getCalendar() {
         return calendar;
+    }
+    public GmailElement getGmail() {
+        return gmail;
+    }
+    public DriveElement getDrive() {
+        return drive;
     }
 }

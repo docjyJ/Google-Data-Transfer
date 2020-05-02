@@ -11,6 +11,11 @@ Transfer Google data from one account to another.
     * contacts
 * Google Calendar **(WIP)**
     * calendar and events
+* Gmail **(WIP)**
+    * filters
+    * settings
+* Drive **(WIP)**
+    * clone files
 
 ## Prerequisite
 Have a client_secrets.json file for Google OAuth 2.0 with apis :
