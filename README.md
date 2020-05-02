@@ -7,14 +7,14 @@ Transfer Google data from one account to another.
     * disliked videos
     * subscribed channels
     * playlists
-* Google Contacts **(WIP)**
+* Contacts **(WIP)**
     * contacts
 * Google Calendar **(WIP)**
     * calendar and events
 * Gmail **(WIP)**
     * filters
     * settings
-* Drive **(WIP)**
+* Google Drive **(WIP)**
     * clone files
 
 ## Prerequisite
@@ -22,6 +22,8 @@ Have a client_secrets.json file for Google OAuth 2.0 with apis :
 - YouTube Data API v3
 - Contacts API
 - Google Calendar API
+- Gmail API
+- Google Drive API
 > More information : https://developers.google.com/identity/protocols/oauth2
 
 ## Install and Run
