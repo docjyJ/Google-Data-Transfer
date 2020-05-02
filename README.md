@@ -8,9 +8,9 @@ Transfer Google data from one account to another.
     * subscribed channels
     * playlists
 * Google Contacts **(WIP)**
-* Google Calendar
-    * calendar and events 
-    * settings **(WIP)**
+    * contacts
+* Google Calendar **(WIP)**
+    * calendar and events
 
 ## Prerequisite
 Have a client_secrets.json file for Google OAuth 2.0 with apis :
