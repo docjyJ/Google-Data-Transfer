@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class DriveElement extends GoogleTransfer {
     //ELEMENT
-    transient Drive service;
+    protected transient Drive service;
 
     //CONSTRUCTOR
     public DriveElement(Drive service) {
@@ -28,4 +28,5 @@ public class DriveElement extends GoogleTransfer {
     public Drive getService() {
         return service;
     }
+
 }

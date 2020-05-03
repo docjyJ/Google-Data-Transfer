@@ -10,11 +10,11 @@ import java.util.List;
 
 public class YoutubeElement extends GoogleTransfer {
     //ELEMENT
-    transient YouTube service;
-    List<String> likes;
-    List<String> dislikes;
-    List<Subscription> subscriptions;
-    List<PlaylistElement> playlists;
+    protected transient YouTube service;
+    protected List<String> likes;
+    protected List<String> dislikes;
+    protected List<Subscription> subscriptions;
+    protected List<PlaylistElement> playlists;
 
     //CONSTRUCTOR
     public YoutubeElement(YouTube service) {
@@ -29,7 +29,7 @@ public class YoutubeElement extends GoogleTransfer {
         this.likes = new ArrayList<>();
         VideoListResponse request = new VideoListResponse().setNextPageToken(" ");
         while (request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()) {
-            request = this.getService().videos()
+            request = this.service.videos()
                     .list("id")
                     .setMaxResults(50L)
                     .setPageToken(request.getNextPageToken())
@@ -45,7 +45,7 @@ public class YoutubeElement extends GoogleTransfer {
         this.dislikes = new ArrayList<>();
         VideoListResponse request = new VideoListResponse().setNextPageToken(" ");
         while (request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()) {
-            request = this.getService().videos()
+            request = this.service.videos()
                     .list("id")
                     .setMaxResults(50L)
                     .setPageToken(request.getNextPageToken())
@@ -61,7 +61,7 @@ public class YoutubeElement extends GoogleTransfer {
         this.subscriptions = new ArrayList<>();
         SubscriptionListResponse request = new SubscriptionListResponse().setNextPageToken(" ");
         while (request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()) {
-            request = this.getService().subscriptions()
+            request = this.service.subscriptions()
                     .list("snippet")
                     .setMaxResults(50L)
                     .setPageToken(request.getNextPageToken())
@@ -79,7 +79,7 @@ public class YoutubeElement extends GoogleTransfer {
         this.playlists = new ArrayList<>();
         PlaylistListResponse request = new PlaylistListResponse().setNextPageToken(" ");
         while (request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()){
-            request = this.getService().playlists()
+            request = this.service.playlists()
                     .list("snippet,status")
                     .setMaxResults(50L)
                     .setPageToken(request.getNextPageToken())
@@ -119,12 +119,12 @@ public class YoutubeElement extends GoogleTransfer {
     }
     public YoutubeElement putPlaylist(YouTube newClient) throws IOException {
         for (PlaylistElement playlist: this.playlists) {
-            logPrintln(playlist.getPlaylist());
+            logPrintln(playlist.playlist);
             String id = newClient.playlists()
-                    .insert("snippet,status",playlist.getPlaylist())
+                    .insert("snippet,status",playlist.playlist)
                     .execute()
                     .getId();
-            for (PlaylistItem item :playlist.getItems()){
+            for (PlaylistItem item :playlist.items){
                 logPrintln(item);
                 item.getSnippet().setPlaylistId(id);
                 newClient.playlistItems()

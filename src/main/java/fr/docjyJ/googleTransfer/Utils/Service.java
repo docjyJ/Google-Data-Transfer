@@ -23,12 +23,12 @@ import java.util.Objects;
 
 public class Service extends GoogleTransfer {
     //ELEMENT
-    transient Credential credential;
-    ContactElement contacts;
-    YoutubeElement youtube;
-    CalendarElement calendar;
-    GmailElement gmail;
-    DriveElement drive;
+    protected transient Credential credential;
+    protected ContactElement contacts;
+    protected YoutubeElement youtube;
+    protected CalendarElement calendar;
+    protected GmailElement gmail;
+    protected DriveElement drive;
 
     //CONSTRUCTOR
     public Service() throws Exception {
@@ -82,30 +82,15 @@ public class Service extends GoogleTransfer {
 
     //PUT
     public Service putAll(Service newClient) throws Exception {
-        contacts.putAll(newClient.getContactService());
-        youtube.putAll(newClient.getYoutubeService());
-        calendar.putAll(newClient.getCalendarService());
-        gmail.putAll(newClient.getGmailService());
-        drive.putAll(newClient.getDriveService());
+        this.contacts.putAll(newClient.contacts.getService());
+        this.youtube.putAll(newClient.youtube.getService());
+        this.calendar.putAll(newClient.calendar.getService());
+        this.gmail.putAll(newClient.gmail.getService());
+        this.drive.putAll(newClient.drive.getService());
         return this;
     }
 
     //GET
-    public ContactsService getContactService(){
-        return contacts.getService();
-    }
-    public Calendar getCalendarService(){
-        return calendar.getService();
-    }
-    public YouTube getYoutubeService(){
-        return youtube.getService();
-    }
-    public Gmail getGmailService(){
-        return gmail.getService();
-    }
-    public Drive getDriveService(){
-        return drive.getService();
-    }
     public Credential getCredential() {
         return credential;
     }
@@ -124,4 +109,20 @@ public class Service extends GoogleTransfer {
     public DriveElement getDrive() {
         return drive;
     }
+    public ContactsService getContactsService() {
+        return contacts.getService();
+    }
+    public YouTube getYoutubeService() {
+        return youtube.getService();
+    }
+    public Calendar getCalendarService() {
+        return calendar.getService();
+    }
+    public Gmail getGmailService() {
+        return gmail.getService();
+    }
+    public Drive getDriveService() {
+        return drive.getService();
+    }
+
 }

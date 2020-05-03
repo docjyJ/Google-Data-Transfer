@@ -19,8 +19,8 @@ import java.util.List;
 
 public class ContactElement extends GoogleTransfer {
     //ELEMENT
-    transient ContactsService service;
-    List<ContactEntry> contacts;
+    protected transient ContactsService service;
+    protected List<ContactEntry> contacts;
 
     //CONSTRUCTOR
     public ContactElement(ContactsService service) {

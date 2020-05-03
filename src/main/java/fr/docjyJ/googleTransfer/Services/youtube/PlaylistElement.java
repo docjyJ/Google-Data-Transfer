@@ -9,8 +9,8 @@ import java.util.List;
 
 public class PlaylistElement {
     //ELEMENT
-    Playlist playlist;
-    List<PlaylistItem> items;
+    protected Playlist playlist;
+    protected List<PlaylistItem> items;
 
     //CONSTRUCTOR
     protected PlaylistElement(Playlist playlist, YouTube client) throws IOException {
