@@ -12,8 +12,8 @@ import java.util.List;
 
 public class CalendarElement extends GoogleTransfer {
     //ELEMENT
-    transient Calendar service;
-    List<CalendarItemElement> calendars;
+    protected transient Calendar service;
+    protected List<CalendarItemElement> calendars;
 
     //CONSTRUCTOR
     public CalendarElement(Calendar service) {
@@ -28,13 +28,14 @@ public class CalendarElement extends GoogleTransfer {
         this.calendars = new ArrayList<>();
         CalendarList request = new CalendarList().setNextPageToken(" ");
         while (request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()) {
-            request = this.getService().calendarList()
+            request = this.service.calendarList()
                     .list()
+                    .setMinAccessRole("owner")
                     .setMaxResults(50)
                     .setPageToken(request.getNextPageToken())
                     .execute();
             for (CalendarListEntry value : request.getItems()) {
-                    this.calendars.add(new CalendarItemElement(value, this.getService()));
+                    this.calendars.add(new CalendarItemElement(value, this.service));
             }
         }
         return this;
@@ -46,17 +47,29 @@ public class CalendarElement extends GoogleTransfer {
     }
     public CalendarElement putCalendars(Calendar newClient) throws IOException {
         for (CalendarItemElement calendar: this.calendars) {
-            logPrintln(calendar.getCalendar());
-            String id = newClient.calendars()
-                    .insert(calendar.getCalendar())
-                    .execute()
-                    .getId();
-            for (Event event :calendar.getEvents()){
+            logPrintln(calendar.calendar);
+            String id = "primary";
+            if(!calendar.calendar.getSummary().equals(id))
+                id = newClient.calendars()
+                        .insert(calendar.calendar)
+                        .execute()
+                        .getId();
+            logPrintln(calendar.calendar);
+            newClient.calendars()
+                    .update(id,calendar.calendar)
+                    .execute();
+            logPrintln(calendar.calendarList);
+            newClient.calendarList()
+                    .update(id,calendar.calendarList)
+                    .setColorRgbFormat(true)
+                    .execute();
+            for (Event event :calendar.events){
                 logPrintln(event);
                 newClient.events()
                         .insert(id, event)
                         .setSupportsAttachments(true)
                         .execute();
+
             }
         }
         return this;

@@ -1,9 +1,6 @@
 package fr.docjyJ.googleTransfer.Services.calendar;
 
-import com.google.api.services.calendar.model.Calendar;
-import com.google.api.services.calendar.model.CalendarListEntry;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.Events;
+import com.google.api.services.calendar.model.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,13 +8,31 @@ import java.util.List;
 
 public class CalendarItemElement {
     //ELEMENT
-    Calendar calendar;
-    List<Event> events;
+    protected Calendar calendar;
+    protected CalendarListEntry calendarList;
+    protected List<Event> events;
 
     //CONSTRUCTOR
     protected CalendarItemElement(CalendarListEntry calendar, com.google.api.services.calendar.Calendar client) throws IOException {
-        this.calendar = new Calendar()
-                .setSummary(calendar.getSummary());
+        if(calendar.getSummary().equals(calendar.getId())) this.calendar = new Calendar()
+                .setSummary("primary")
+                .setDescription(calendar.getDescription())
+                .setLocation(calendar.getLocation())
+                .setTimeZone(calendar.getTimeZone());
+        else this.calendar = new Calendar()
+                .setSummary(calendar.getSummary())
+                .setDescription(calendar.getDescription())
+                .setLocation(calendar.getLocation())
+                .setTimeZone(calendar.getTimeZone());
+        this.calendarList = new CalendarListEntry()
+                .setBackgroundColor(calendar.getBackgroundColor())
+                .setColorId(calendar.getColorId())
+                .setDefaultReminders(calendar.getDefaultReminders())
+                .setForegroundColor(calendar.getForegroundColor())
+                .setHidden(calendar.getHidden())
+                .setNotificationSettings(calendar.getNotificationSettings())
+                .setSelected(calendar.getSelected())
+                .setSummaryOverride(calendar.getSummaryOverride());
         this.events = new ArrayList<>();
         Events request = new Events().setNextPageToken(" ");
         while (request.getNextPageToken()!=null && !request.getNextPageToken().isEmpty()) {
@@ -58,6 +73,9 @@ public class CalendarItemElement {
     //GET
     public Calendar getCalendar() {
         return calendar;
+    }
+    public CalendarListEntry getCalendarListUpdate() {
+        return calendarList;
     }
     public List<Event> getEvents() {
         return events;

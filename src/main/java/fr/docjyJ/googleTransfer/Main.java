@@ -4,7 +4,10 @@ import fr.docjyJ.googleTransfer.Utils.Service;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        new Service().readAll().putAll(new Service()).print();
+        new Service().getCalendar()
+                .readAll()
+                .putAll(new Service().getCalendarService())
+                .print();
 
         /* ====Sample test==== *
         Test all services with all parties
