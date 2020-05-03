@@ -22,7 +22,7 @@ public class GoogleTransfer {
             "https://www.googleapis.com/auth/calendar",
             "https://www.googleapis.com/auth/drive",
             "https://www.googleapis.com/auth/photoslibrary",
-            "https://www.googleapis.com/auth/gmail.settings.basic",
+            "https://www.googleapis.com/auth/gmail.modify",
             "https://www.google.com/m8/feeds/");
 
     transient File file;

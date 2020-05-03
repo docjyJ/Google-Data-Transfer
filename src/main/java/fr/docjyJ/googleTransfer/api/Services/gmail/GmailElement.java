@@ -24,7 +24,7 @@ public class GmailElement extends GoogleTransfer {
 
     //READ
     public GmailElement readAll() throws IOException {
-        return this;
+        return this.readFilters().readLabels();
     }
     public GmailElement readFilters() throws IOException {
         this.filters = new ArrayList<>();
@@ -76,5 +76,8 @@ public class GmailElement extends GoogleTransfer {
     }
     public List<Filter> getFilters() {
         return filters;
+    }
+    public List<Label> getLabels() {
+        return labels;
     }
 }
