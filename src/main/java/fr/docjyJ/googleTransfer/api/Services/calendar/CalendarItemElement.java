@@ -1,4 +1,4 @@
-package fr.docjyJ.googleTransfer.Services.calendar;
+package fr.docjyJ.googleTransfer.api.Services.calendar;
 
 import com.google.api.services.calendar.model.*;
 

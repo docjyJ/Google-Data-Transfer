@@ -1,14 +1,13 @@
 package fr.docjyJ.googleTransfer;
 
-import fr.docjyJ.googleTransfer.Utils.Service;
+import fr.docjyJ.googleTransfer.api.Utils.Service;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        new Service().getCalendar()
+        new Service()
                 .readAll()
-                .putAll(new Service().getCalendarService())
+                .putAll(new Service())
                 .print();
-
         /* ====Sample test==== *
         Test all services with all parties
         new Service()

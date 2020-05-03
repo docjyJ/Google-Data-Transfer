@@ -1,4 +1,4 @@
-package fr.docjyJ.googleTransfer.Services.contact;
+package fr.docjyJ.googleTransfer.api.Services.contact;
 
 import com.google.gdata.client.contacts.ContactsService;
 import com.google.gdata.data.Link;
@@ -10,7 +10,7 @@ import com.google.gdata.data.extensions.ExtendedProperty;
 import com.google.gdata.data.extensions.Im;
 import com.google.gdata.data.extensions.Name;
 import com.google.gdata.util.ServiceException;
-import fr.docjyJ.googleTransfer.Utils.GoogleTransfer;
+import fr.docjyJ.googleTransfer.api.Utils.GoogleTransfer;
 
 import java.io.IOException;
 import java.net.URL;

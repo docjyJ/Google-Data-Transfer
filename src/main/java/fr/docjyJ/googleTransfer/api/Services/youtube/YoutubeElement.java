@@ -1,8 +1,8 @@
-package fr.docjyJ.googleTransfer.Services.youtube;
+package fr.docjyJ.googleTransfer.api.Services.youtube;
 
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;
-import fr.docjyJ.googleTransfer.Utils.GoogleTransfer;
+import fr.docjyJ.googleTransfer.api.Utils.GoogleTransfer;
 
 import java.io.IOException;
 import java.util.ArrayList;

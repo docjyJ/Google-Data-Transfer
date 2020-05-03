@@ -1,4 +1,4 @@
-package fr.docjyJ.googleTransfer.Utils;
+package fr.docjyJ.googleTransfer.api.Utils;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -12,11 +12,11 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.youtube.YouTube;
 import com.google.gdata.client.contacts.ContactsService;
-import fr.docjyJ.googleTransfer.Services.calendar.CalendarElement;
-import fr.docjyJ.googleTransfer.Services.contact.ContactElement;
-import fr.docjyJ.googleTransfer.Services.drive.DriveElement;
-import fr.docjyJ.googleTransfer.Services.gmail.GmailElement;
-import fr.docjyJ.googleTransfer.Services.youtube.YoutubeElement;
+import fr.docjyJ.googleTransfer.api.Services.calendar.CalendarElement;
+import fr.docjyJ.googleTransfer.api.Services.contact.ContactElement;
+import fr.docjyJ.googleTransfer.api.Services.drive.DriveElement;
+import fr.docjyJ.googleTransfer.api.Services.gmail.GmailElement;
+import fr.docjyJ.googleTransfer.api.Services.youtube.YoutubeElement;
 
 import java.io.InputStreamReader;
 import java.util.Objects;

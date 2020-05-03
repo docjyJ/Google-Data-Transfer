@@ -1,4 +1,4 @@
-package fr.docjyJ.googleTransfer.Utils;
+package fr.docjyJ.googleTransfer.api.Utils;
 
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;

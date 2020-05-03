@@ -1,7 +1,7 @@
-package fr.docjyJ.googleTransfer.Services.drive;
+package fr.docjyJ.googleTransfer.api.Services.drive;
 
 import com.google.api.services.drive.Drive;
-import fr.docjyJ.googleTransfer.Utils.GoogleTransfer;
+import fr.docjyJ.googleTransfer.api.Utils.GoogleTransfer;
 
 import java.io.IOException;
 

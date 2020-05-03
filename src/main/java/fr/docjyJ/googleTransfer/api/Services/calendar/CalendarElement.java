@@ -1,10 +1,10 @@
-package fr.docjyJ.googleTransfer.Services.calendar;
+package fr.docjyJ.googleTransfer.api.Services.calendar;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
-import fr.docjyJ.googleTransfer.Utils.GoogleTransfer;
+import fr.docjyJ.googleTransfer.api.Utils.GoogleTransfer;
 
 import java.io.IOException;
 import java.util.ArrayList;

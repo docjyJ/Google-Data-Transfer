@@ -1,4 +1,4 @@
-package fr.docjyJ.googleTransfer.Services.youtube;
+package fr.docjyJ.googleTransfer.api.Services.youtube;
 
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;

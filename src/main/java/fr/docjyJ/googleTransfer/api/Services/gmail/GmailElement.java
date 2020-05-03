@@ -1,9 +1,9 @@
-package fr.docjyJ.googleTransfer.Services.gmail;
+package fr.docjyJ.googleTransfer.api.Services.gmail;
 
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Filter;
 import com.google.api.services.gmail.model.Label;
-import fr.docjyJ.googleTransfer.Utils.GoogleTransfer;
+import fr.docjyJ.googleTransfer.api.Utils.GoogleTransfer;
 
 import java.io.IOException;
 import java.util.ArrayList;
