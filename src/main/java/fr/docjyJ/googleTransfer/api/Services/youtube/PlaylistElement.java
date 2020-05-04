@@ -14,7 +14,7 @@ public class PlaylistElement {
 
     //CONSTRUCTOR
     protected PlaylistElement(Playlist playlist, YouTube client) throws IOException {
-        YoutubeElement.logPrint("READ: playlist-" + playlist.getSnippet().getTitle());
+        YoutubeElement.logPrint("READ: playlist-[" + playlist.getSnippet().getTitle() + "]");
         this.playlist = new Playlist()
                 .setSnippet(new PlaylistSnippet()
                         .setDefaultLanguage(playlist.getSnippet().getDefaultLanguage())
@@ -33,7 +33,7 @@ public class PlaylistElement {
                     .setPageToken(request.getNextPageToken())
                     .execute();
             for( PlaylistItem value : request.getItems()) {
-                YoutubeElement.logPrint("READ: playlist-" + playlist.getSnippet().getTitle() + "-" + value.getSnippet().getResourceId().getVideoId());
+                YoutubeElement.logPrint("READ: playlist-[" + playlist.getSnippet().getTitle() + "]-" + value.getSnippet().getResourceId().getVideoId());
                 this.items.add(new PlaylistItem().setSnippet(
                         new PlaylistItemSnippet()
                                 .setPosition(value.getSnippet().getPosition())

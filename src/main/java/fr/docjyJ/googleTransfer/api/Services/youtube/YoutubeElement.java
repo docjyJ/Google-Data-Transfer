@@ -126,13 +126,13 @@ public class YoutubeElement extends GoogleTransfer {
     }
     public YoutubeElement putPlaylist(List<PlaylistElement> data) throws IOException {
         for (PlaylistElement playlist: data) {
-            YoutubeElement.logPrint("PUT: playlist-" + playlist.playlist.getSnippet().getTitle());
+            YoutubeElement.logPrint("PUT: playlist[-" + playlist.playlist.getSnippet().getTitle() + "]");
             String id = service.playlists()
                     .insert("snippet,status",playlist.playlist)
                     .execute()
                     .getId();
             for (PlaylistItem item :playlist.items){
-                YoutubeElement.logPrint("PUT: playlist-" + playlist.playlist.getSnippet().getTitle() + "-" + item.getSnippet().getResourceId().getVideoId());
+                YoutubeElement.logPrint("PUT: playlist-[" + playlist.playlist.getSnippet().getTitle() + "]-" + item.getSnippet().getResourceId().getVideoId());
                 item.getSnippet().setPlaylistId(id);
                 service.playlistItems()
                         .insert("snippet",item)
