@@ -54,11 +54,9 @@ public class CalendarElement extends GoogleTransfer {
                         .insert(calendar.calendar)
                         .execute()
                         .getId();
-            logPrint(calendar.calendar);
             service.calendars()
                     .update(id,calendar.calendar)
                     .execute();
-            logPrint(calendar.calendarList);
             service.calendarList()
                     .update(id,calendar.calendarList)
                     .setColorRgbFormat(true)
