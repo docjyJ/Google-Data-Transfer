@@ -159,14 +159,14 @@ public class ContactElement extends GoogleTransfer {
 
 
     //PUT
-    public ContactElement putAll(ContactsService newClient) throws IOException, ServiceException {
-        return this.putContacts(newClient);
+    public ContactElement putAll(ContactElement data) throws IOException, ServiceException {
+        return this.putContacts(data.getContacts());
     }
-    public ContactElement putContacts(ContactsService newClient) throws IOException, ServiceException {
+    public ContactElement putContacts(List<ContactEntry> data) throws IOException, ServiceException {
         URL URL = new URL("https://www.google.com/m8/feeds/contacts/default/full");
-        for (ContactEntry entry: this.contacts) {
+        for (ContactEntry entry: data) {
             logPrint(entry);
-            newClient.insert(URL, entry);
+            service.insert(URL, entry);
         }
         return this;
     }

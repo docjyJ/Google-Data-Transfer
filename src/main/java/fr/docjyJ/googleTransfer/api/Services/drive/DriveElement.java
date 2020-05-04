@@ -3,8 +3,6 @@ package fr.docjyJ.googleTransfer.api.Services.drive;
 import com.google.api.services.drive.Drive;
 import fr.docjyJ.googleTransfer.api.Utils.GoogleTransfer;
 
-import java.io.IOException;
-
 public class DriveElement extends GoogleTransfer {
     //ELEMENT
     protected transient Drive service;
@@ -15,12 +13,12 @@ public class DriveElement extends GoogleTransfer {
     }
 
     //READ
-    public DriveElement readAll() throws IOException {
+    public DriveElement readAll() {
         return this;
     }
 
     //PUT
-    public DriveElement putAll(Drive newClient) throws IOException {
+    public DriveElement putAll(DriveElement data) {
         return this;
     }
 

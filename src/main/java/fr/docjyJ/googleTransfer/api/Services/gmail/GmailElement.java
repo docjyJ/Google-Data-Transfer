@@ -48,14 +48,14 @@ public class GmailElement extends GoogleTransfer {
     }
 
     //PUT
-    public GmailElement putAll(Gmail newClient) throws IOException {
+    public GmailElement putAll(GmailElement data) throws IOException {
         return this;
     }
-    public GmailElement putLabels(Gmail newClient) throws IOException {
-        for (Label label:this.labels) {
+    public GmailElement putLabels(List<Label> data) throws IOException {
+        for (Label label: data) {
             this.labelCorrection.put(
                     label.getId(),
-                    newClient.users().labels()
+                    service.users().labels()
                             .create("me", new Label()
                                     .setName(label.getName())
                                     .setLabelListVisibility(label.getLabelListVisibility())

@@ -93,41 +93,45 @@ public class YoutubeElement extends GoogleTransfer {
     }
 
     //PUT
-    public YoutubeElement putAll(YouTube newClient) throws IOException {
-        return this.putLike(newClient).putDislike(newClient).putSubscriptions(newClient).putPlaylist(newClient);
+    public YoutubeElement putAll(YoutubeElement data) throws IOException {
+        return this
+                .putLike(data.likes)
+                .putDislike(data.dislikes)
+                .putSubscriptions(data.subscriptions)
+                .putPlaylist(data.playlists);
     }
-    public YoutubeElement putLike(YouTube newClient) throws IOException {
-        for (String id :this.likes) {
+    public YoutubeElement putLike(List<String> data) throws IOException {
+        for (String id :data) {
             logPrint(id);
-            newClient.videos().rate(id, "like").execute();
+            service.videos().rate(id, "like").execute();
         }
         return this;
     }
-    public YoutubeElement putDislike(YouTube newClient) throws IOException {
-        for (String id :this.dislikes) {
+    public YoutubeElement putDislike(List<String> data) throws IOException {
+        for (String id :data) {
             logPrint(id);
-            newClient.videos().rate(id, "dislike").execute();
+            service.videos().rate(id, "dislike").execute();
         }
         return this;
     }
-    public YoutubeElement putSubscriptions(YouTube newClient) throws IOException {
-        for (Subscription subscription :this.subscriptions) {
+    public YoutubeElement putSubscriptions(List<Subscription> data) throws IOException {
+        for (Subscription subscription :data) {
             logPrint(subscription);
-            newClient.subscriptions().insert("snippet",subscription).execute();
+            service.subscriptions().insert("snippet",subscription).execute();
         }
         return this;
     }
-    public YoutubeElement putPlaylist(YouTube newClient) throws IOException {
-        for (PlaylistElement playlist: this.playlists) {
+    public YoutubeElement putPlaylist(List<PlaylistElement> data) throws IOException {
+        for (PlaylistElement playlist: data) {
             logPrint(playlist.playlist);
-            String id = newClient.playlists()
+            String id = service.playlists()
                     .insert("snippet,status",playlist.playlist)
                     .execute()
                     .getId();
             for (PlaylistItem item :playlist.items){
                 logPrint(item);
                 item.getSnippet().setPlaylistId(id);
-                newClient.playlistItems()
+                service.playlistItems()
                         .insert("snippet",item)
                         .execute();
             }

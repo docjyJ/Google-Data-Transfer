@@ -96,12 +96,12 @@ public class Service extends GoogleTransfer {
     }
 
     //PUT
-    public Service putAll(Service newClient) throws Exception {
-        this.contacts.putAll(newClient.contacts.getService());
-        this.youtube.putAll(newClient.youtube.getService());
-        this.calendar.putAll(newClient.calendar.getService());
-        this.gmail.putAll(newClient.gmail.getService());
-        this.drive.putAll(newClient.drive.getService());
+    public Service putAll(Service data) throws Exception {
+        this.contacts.putAll(data.contacts);
+        this.youtube.putAll(data.youtube);
+        this.calendar.putAll(data.calendar);
+        this.gmail.putAll(data.gmail);
+        this.drive.putAll(data.drive);
         return this;
     }
 
