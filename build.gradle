@@ -8,7 +8,7 @@ version 'BETA'
 jar {
     manifest {
         attributes(
-                'Main-Class': 'fr.docjyJ.googleTransfer.app.Windows'
+                'Main-Class': 'fr.docjyJ.googleTransfer.app.Main'
         )
     }
 }

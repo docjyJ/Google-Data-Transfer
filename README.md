@@ -7,10 +7,10 @@ Transfer Google data from one account to another.
     * disliked videos
     * subscribed channels
     * playlists
+* Google Calendar
+    * calendar and events
 * Contacts **(WIP)**
     * contacts
-* Google Calendar **(WIP)**
-    * calendar and events
 * Gmail **(WIP)**
     * filters
     * settings
