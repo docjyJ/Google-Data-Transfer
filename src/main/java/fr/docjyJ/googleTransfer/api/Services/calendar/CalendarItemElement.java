@@ -14,6 +14,7 @@ public class CalendarItemElement {
 
     //CONSTRUCTOR
     protected CalendarItemElement(CalendarListEntry calendar, com.google.api.services.calendar.Calendar client) throws IOException {
+        CalendarElement.logPrint("READ: calendar-[" + calendar.getSummary() + "]");
         if(calendar.getSummary().equals(calendar.getId())) this.calendar = new Calendar()
                 .setSummary("primary")
                 .setDescription(calendar.getDescription())
@@ -43,6 +44,7 @@ public class CalendarItemElement {
                 temp.setPageToken(request.getNextPageToken());
             request=temp.execute();
             for( Event value : request.getItems()) {
+                CalendarElement.logPrint("READ: calendar-[" + calendar.getSummary() + "]-[" + value.getSummary() + "]");
                 this.events.add(new Event()
                         .setStart(value.getStart())
                         .setEnd(value.getEnd())

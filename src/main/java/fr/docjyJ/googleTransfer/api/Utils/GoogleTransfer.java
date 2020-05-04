@@ -37,7 +37,7 @@ public class GoogleTransfer {
         logPrint(this.toJson());
         return this;
     }
-    public void logPrint(Object object){
+    public static void logPrint(Object object){
         System.out.println(object);
     }
 

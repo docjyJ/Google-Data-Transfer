@@ -47,7 +47,7 @@ public class CalendarElement extends GoogleTransfer {
     }
     public CalendarElement putCalendars(List<CalendarItemElement> data) throws IOException {
         for (CalendarItemElement calendar: data) {
-            logPrint(calendar.calendar);
+            logPrint("PUT: calendar-[" + calendar.calendar.getSummary() + "]");
             String id = "primary";
             if(!calendar.calendar.getSummary().equals(id))
                 id = service.calendars()
@@ -64,7 +64,7 @@ public class CalendarElement extends GoogleTransfer {
                     .setColorRgbFormat(true)
                     .execute();
             for (Event event :calendar.events){
-                logPrint(event);
+                logPrint("PUT: calendar-[" + calendar.calendar.getSummary() + "]-[" + event.getSummary() + "]");
                 service.events()
                         .insert(id, event)
                         .setSupportsAttachments(true)

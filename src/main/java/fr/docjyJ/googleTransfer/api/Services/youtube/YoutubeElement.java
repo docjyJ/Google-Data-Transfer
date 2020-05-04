@@ -36,6 +36,7 @@ public class YoutubeElement extends GoogleTransfer {
                     .setMyRating("like")
                     .execute();
             for( Video value : request.getItems()) {
+                logPrint("READ: like-" + value.getId());
                 this.likes.add(value.getId());
             }
         }
@@ -52,6 +53,7 @@ public class YoutubeElement extends GoogleTransfer {
                     .setMyRating("dislike")
                     .execute();
             for( Video value : request.getItems()) {
+                logPrint("READ: dislike-" + value.getId());
                 this.dislikes.add(value.getId());
             }
         }
@@ -68,6 +70,7 @@ public class YoutubeElement extends GoogleTransfer {
                     .setMine(true)
                     .execute();
             for (Subscription value : request.getItems()) {
+                logPrint("READ: subscription-" + value.getSnippet().getResourceId().getChannelId());
                 this.subscriptions.add(new Subscription().setSnippet(
                         new SubscriptionSnippet()
                                 .setResourceId(value.getSnippet().getResourceId())));
@@ -102,34 +105,34 @@ public class YoutubeElement extends GoogleTransfer {
     }
     public YoutubeElement putLike(List<String> data) throws IOException {
         for (String id :data) {
-            logPrint(id);
+            logPrint("PUT: like-" + id);
             service.videos().rate(id, "like").execute();
         }
         return this;
     }
     public YoutubeElement putDislike(List<String> data) throws IOException {
         for (String id :data) {
-            logPrint(id);
+            logPrint("PUT: dislike-" + id);
             service.videos().rate(id, "dislike").execute();
         }
         return this;
     }
     public YoutubeElement putSubscriptions(List<Subscription> data) throws IOException {
         for (Subscription subscription :data) {
-            logPrint(subscription);
+            logPrint("PUT: subscription-" + subscription.getSnippet().getResourceId().getChannelId());
             service.subscriptions().insert("snippet",subscription).execute();
         }
         return this;
     }
     public YoutubeElement putPlaylist(List<PlaylistElement> data) throws IOException {
         for (PlaylistElement playlist: data) {
-            logPrint(playlist.playlist);
+            YoutubeElement.logPrint("PUT: playlist-" + playlist.playlist.getSnippet().getTitle());
             String id = service.playlists()
                     .insert("snippet,status",playlist.playlist)
                     .execute()
                     .getId();
             for (PlaylistItem item :playlist.items){
-                logPrint(item);
+                YoutubeElement.logPrint("PUT: playlist-" + playlist.playlist.getSnippet().getTitle() + "-" + item.getSnippet().getResourceId().getVideoId());
                 item.getSnippet().setPlaylistId(id);
                 service.playlistItems()
                         .insert("snippet",item)
