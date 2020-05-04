@@ -7,6 +7,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.gmail.Gmail;
@@ -19,9 +21,22 @@ import fr.docjyJ.googleTransfer.api.Services.gmail.GmailElement;
 import fr.docjyJ.googleTransfer.api.Services.youtube.YoutubeElement;
 
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 public class Service extends GoogleTransfer {
+    protected static final String CLIENT_SECRETS = "client_secret.json";
+    protected static final String APPLICATION_NAME = "Google Transfer";
+    protected static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    protected static final Collection<String> SCOPES = Arrays.asList(
+            "https://www.googleapis.com/auth/youtube",
+            "https://www.googleapis.com/auth/calendar",
+            "https://www.googleapis.com/auth/drive",
+            "https://www.googleapis.com/auth/photoslibrary",
+            "https://www.googleapis.com/auth/gmail.modify",
+            "https://www.google.com/m8/feeds/");
+
     //ELEMENT
     protected transient Credential credential;
     protected ContactElement contacts;

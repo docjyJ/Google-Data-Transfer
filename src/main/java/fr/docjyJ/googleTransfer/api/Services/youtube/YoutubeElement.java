@@ -98,34 +98,34 @@ public class YoutubeElement extends GoogleTransfer {
     }
     public YoutubeElement putLike(YouTube newClient) throws IOException {
         for (String id :this.likes) {
-            logPrintln(id);
+            logPrint(id);
             newClient.videos().rate(id, "like").execute();
         }
         return this;
     }
     public YoutubeElement putDislike(YouTube newClient) throws IOException {
         for (String id :this.dislikes) {
-            logPrintln(id);
+            logPrint(id);
             newClient.videos().rate(id, "dislike").execute();
         }
         return this;
     }
     public YoutubeElement putSubscriptions(YouTube newClient) throws IOException {
         for (Subscription subscription :this.subscriptions) {
-            logPrintln(subscription);
+            logPrint(subscription);
             newClient.subscriptions().insert("snippet",subscription).execute();
         }
         return this;
     }
     public YoutubeElement putPlaylist(YouTube newClient) throws IOException {
         for (PlaylistElement playlist: this.playlists) {
-            logPrintln(playlist.playlist);
+            logPrint(playlist.playlist);
             String id = newClient.playlists()
                     .insert("snippet,status",playlist.playlist)
                     .execute()
                     .getId();
             for (PlaylistItem item :playlist.items){
-                logPrintln(item);
+                logPrint(item);
                 item.getSnippet().setPlaylistId(id);
                 newClient.playlistItems()
                         .insert("snippet",item)

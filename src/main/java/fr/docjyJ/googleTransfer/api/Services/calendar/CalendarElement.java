@@ -47,24 +47,24 @@ public class CalendarElement extends GoogleTransfer {
     }
     public CalendarElement putCalendars(Calendar newClient) throws IOException {
         for (CalendarItemElement calendar: this.calendars) {
-            logPrintln(calendar.calendar);
+            logPrint(calendar.calendar);
             String id = "primary";
             if(!calendar.calendar.getSummary().equals(id))
                 id = newClient.calendars()
                         .insert(calendar.calendar)
                         .execute()
                         .getId();
-            logPrintln(calendar.calendar);
+            logPrint(calendar.calendar);
             newClient.calendars()
                     .update(id,calendar.calendar)
                     .execute();
-            logPrintln(calendar.calendarList);
+            logPrint(calendar.calendarList);
             newClient.calendarList()
                     .update(id,calendar.calendarList)
                     .setColorRgbFormat(true)
                     .execute();
             for (Event event :calendar.events){
-                logPrintln(event);
+                logPrint(event);
                 newClient.events()
                         .insert(id, event)
                         .setSupportsAttachments(true)

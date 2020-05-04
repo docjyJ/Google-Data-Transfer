@@ -165,7 +165,7 @@ public class ContactElement extends GoogleTransfer {
     public ContactElement putContacts(ContactsService newClient) throws IOException, ServiceException {
         URL URL = new URL("https://www.google.com/m8/feeds/contacts/default/full");
         for (ContactEntry entry: this.contacts) {
-            logPrintln(entry);
+            logPrint(entry);
             newClient.insert(URL, entry);
         }
         return this;
