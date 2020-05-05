@@ -1,15 +1,7 @@
 package fr.docjyJ.googleTransfer;
 
-import fr.docjyJ.googleTransfer.api.Utils.Service;
-
 public class Test {
     public static void main(String[] args) throws Exception {
-        new Service().getGmail()
-                .readAll()
-                .print()
-                .setFile("out.json")
-                .generate()
-                .open();
         /* ====Sample test==== *
         Test all services with all parties
         new Service()
