@@ -12,15 +12,21 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.gmail.Gmail;
+import com.google.api.services.people.v1.PeopleService;
+import com.google.api.services.people.v1.model.Person;
 import com.google.api.services.youtube.YouTube;
-import com.google.gdata.client.contacts.ContactsService;
 import fr.docjyJ.googleTransfer.api.Services.calendar.CalendarElement;
 import fr.docjyJ.googleTransfer.api.Services.contact.ContactElement;
 import fr.docjyJ.googleTransfer.api.Services.drive.DriveElement;
 import fr.docjyJ.googleTransfer.api.Services.gmail.GmailElement;
 import fr.docjyJ.googleTransfer.api.Services.youtube.YoutubeElement;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -30,15 +36,20 @@ public class Service extends GoogleTransfer {
     protected static final String APPLICATION_NAME = "Google Transfer";
     protected static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     protected static final Collection<String> SCOPES = Arrays.asList(
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/userinfo.profile",
             "https://www.googleapis.com/auth/youtube",
             "https://www.googleapis.com/auth/calendar",
             "https://www.googleapis.com/auth/drive",
             "https://www.googleapis.com/auth/photoslibrary",
             "https://www.googleapis.com/auth/gmail.modify",
-            "https://www.google.com/m8/feeds/");
+            "https://www.googleapis.com/auth/contacts");
 
     //ELEMENT
     protected transient Credential credential;
+    protected transient Image userPhoto;
+    protected String userMail;
+    protected String userName;
     protected ContactElement contacts;
     protected YoutubeElement youtube;
     protected CalendarElement calendar;
@@ -61,8 +72,9 @@ public class Service extends GoogleTransfer {
                 new LocalServerReceiver()).authorize("user");
 
         //Contacts
-        this.contacts = new ContactElement(new ContactsService(APPLICATION_NAME));
-        this.contacts.getService().setOAuth2Credentials(this.credential);
+        this.contacts = new ContactElement(new PeopleService.Builder(httpTransport, JSON_FACTORY, this.credential)
+                .setApplicationName(APPLICATION_NAME)
+                .build());
 
         //Youtube
         this.youtube = new YoutubeElement(new YouTube.Builder(httpTransport, JSON_FACTORY, this.credential)
@@ -83,10 +95,19 @@ public class Service extends GoogleTransfer {
         this.drive = new DriveElement(new Drive.Builder(httpTransport, JSON_FACTORY, this.credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build());
+
+        //userInfo
+        Person userInfo = contacts.getService().people()
+                .get("people/me")
+                .setPersonFields("photos,emailAddresses,names")
+                .execute();
+        this.userMail = userInfo.getEmailAddresses().get(0).getValue();
+        this.userName = userInfo.getNames().get(0).getDisplayName();
+        this.userPhoto = new ImageIcon(ImageIO.read(new URL(userInfo.getPhotos().get(0).getUrl()))).getImage();
     }
 
     //READ
-    public Service readAll() throws Exception {
+    public Service readAll() throws IOException {
         this.calendar = this.calendar.readAll();
         this.youtube = this.youtube.readAll();
         this.contacts = this.contacts.readAll();
@@ -96,7 +117,7 @@ public class Service extends GoogleTransfer {
     }
 
     //PUT
-    public Service putAll(Service data) throws Exception {
+    public Service putAll(Service data) throws IOException {
         this.contacts.putAll(data.contacts);
         this.youtube.putAll(data.youtube);
         this.calendar.putAll(data.calendar);
@@ -106,6 +127,15 @@ public class Service extends GoogleTransfer {
     }
 
     //GET
+    public String getUserMail() {
+        return userMail;
+    }
+    public String getUserName() {
+        return userName;
+    }
+    public Image getUserPhoto() {
+        return userPhoto;
+    }
     public Credential getCredential() {
         return credential;
     }
@@ -124,7 +154,7 @@ public class Service extends GoogleTransfer {
     public DriveElement getDrive() {
         return drive;
     }
-    public ContactsService getContactsService() {
+    public PeopleService getContactsService() {
         return contacts.getService();
     }
     public YouTube getYoutubeService() {
