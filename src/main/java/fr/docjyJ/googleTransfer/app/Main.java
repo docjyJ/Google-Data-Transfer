@@ -6,55 +6,49 @@ import com.google.api.services.youtube.model.Subscription;
 import fr.docjyJ.googleTransfer.api.Services.calendar.CalendarItemElement;
 import fr.docjyJ.googleTransfer.api.Services.youtube.PlaylistElement;
 import fr.docjyJ.googleTransfer.api.Utils.Service;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-class Main extends JFrame {
+class Main {
     private final Service serviceOld;
     private final Service serviceNew;
     private List<Setting> settings;
 
+    Document document;
+
     //main/start
     public static void main(String[] args) throws Exception {
-        new Main().start();
-    }
-    public void start(){
-        readActivity();
+        new Main().readActivity();
     }
 
     //Constructor
-    Main() throws Exception {
-        consoleView();
-        setTitle(Lang.APPLICATION_NAME);
-        setSize(500, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setVisible(true);
-
-        JOptionPane.showMessageDialog(null,
-                Lang.FIRST_STEP,
-                Lang.APPLICATION_NAME,
-                JOptionPane.INFORMATION_MESSAGE);
+    private Main() throws Exception {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        SwingUtilities.updateComponentTreeUI(new JFrame());
+        showInfo(Lang.FIRST_STEP);
         this.serviceOld = new Service();
-        JOptionPane.showMessageDialog(null,
-                Lang.SECOND_STEP,
-                Lang.APPLICATION_NAME,
-                JOptionPane.INFORMATION_MESSAGE);
+        showInfo(Lang.SECOND_STEP);
         this.serviceNew = new Service();
     }
 
     //Activity
-    private void readActivity(){
-        consoleView();
+    private void readActivity() {
         settings = Arrays.asList(
                 new Setting("calendar"),
                 new Setting("like"),
@@ -109,14 +103,19 @@ class Main extends JFrame {
                     setting.value = false;
                     showError(e);
                 }
-
             }
-
         }
-        treeView(arg0 -> putActivity());
+        if(showQuestion(Lang.ASK_CHECK)){
+            try {
+                generatePage();
+            } catch (Exception e) {
+                showError(e);
+            }
+        }
+        showInfo(Lang.READY);
+        putActivity();
     }
-    private void putActivity(){
-        consoleView();
+    private void putActivity() {
         for (Setting entry: settings) {
             if(entry.value){
                 try{
@@ -150,138 +149,251 @@ class Main extends JFrame {
                 } catch (IOException e) {
                     showError(e);
                 }
-
             }
-
         }
-        treeView(arg1 -> consoleView());
-    }
-
-    //View
-    private void consoleView() {
-        JTextArea textArea = new JTextArea(50, 10);
-        PrintStream printStream = new PrintStream(new Console(textArea));
-        System.setOut(printStream);
-        System.setErr(printStream);
-        setView(textArea, null);
-    }
-    private void treeView(ActionListener btnAction) {
-        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeComponent(serviceOld), treeComponent(serviceNew));
-        JButton okButton = new JButton(Lang.NEXT);
-        okButton.addActionListener(btnAction);
-        setView(split, okButton);
-    }
-    private void setView(Component center, Component south){
-        setVisible(false);
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        if(center != null) mainPanel.add(center, BorderLayout.CENTER);
-        if(south != null) mainPanel.add(south, BorderLayout.SOUTH);
-        this.setContentPane(new JScrollPane(mainPanel));
-        setVisible(true);
+        if(showQuestion(Lang.ASK_END_CHECK)){
+            try {
+                generatePage();
+            } catch (Exception e) {
+                showError(e);
+            }
+        }
+        exit(0);
     }
 
     //Component
-    private Component treeComponent(Service service) {
+    private void createRecourse(String resourcePath, String contentPath) throws Exception {
+        InputStream stream = Main.class.getResourceAsStream("/"+resourcePath);
+        if(stream == null) {
+            throw new IOException("Cannot get resource \"" + resourcePath + "\" from Jar file.");
+        }
+
+        int readBytes;
+        byte[] buffer = new byte[4096];
+        OutputStream resStreamOut = new FileOutputStream(contentPath);
+        while ((readBytes = stream.read(buffer)) > 0) {
+            resStreamOut.write(buffer, 0, readBytes);
+        }
+        stream.close();
+        stream.close();
+    }
+    private void generatePage() throws Exception {
+        document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        Element body = document.createElement("body");
+        body.appendChild(generateAccount(serviceOld));
+        body.appendChild(generateAccount(serviceNew));
+
+        Element html = document.createElement("html");
+        html.appendChild(generateHeader());
+        html.appendChild(body);
+        html.setAttribute("lang","en");
+        document.appendChild(html);
+
+        String path = "GoogleDataTransferTemp"+new Date().getTime()+"/";
+        File htmlFile = new File(path);
+        if(!htmlFile.exists() & !htmlFile.mkdir())
+            throw new FileNotFoundException();
+        htmlFile = new File(path + "icon/");
+        if(htmlFile.exists() || htmlFile.mkdir()) {
+            createRecourse("icon/Youtube.png", path + "icon/Youtube.png");
+            createRecourse("icon/Calendar.png", path + "icon/Calendar.png");
+            createRecourse("style.css", path + "style.css");
+        }
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+        transformer.setOutputProperty(OutputKeys.METHOD, "html");
+        DOMImplementation domImpl = document.getImplementation();
+        DocumentType doctype = domImpl.createDocumentType("doctype","","");
+        transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
+        transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
+        htmlFile = new File(path + "index.html");
+        FileOutputStream outStream = new FileOutputStream(htmlFile);
+        if(!htmlFile.exists() & !htmlFile.mkdir())
+            throw new FileNotFoundException();
+        transformer.transform(new DOMSource(document), new StreamResult(outStream));
+        Desktop.getDesktop().browse(htmlFile.toURI());
+    }
+    private Element generateHeader() {
+        Element title = document.createElement("title");
+        title.appendChild(document.createTextNode(Lang.APPLICATION_NAME));
+        Element meta = document.createElement("meta");
+        meta.setAttribute("http-equiv", "Content-Type");
+        meta.setAttribute("content", "text/html; charset=UTF-8");
+        Element link = document.createElement("link");
+        link.setAttribute("rel", "stylesheet");
+        link.setAttribute("type", "text/css");
+        link.setAttribute("href", "style.css");
+        Element head = document.createElement("head");
+        head.appendChild(meta);
+        head.appendChild(link);
+        head.appendChild(title);
+        return head;
+    }
+    private Element generateAccount(Service service) throws Exception {
         Map<String, Boolean> settings = new HashMap<>();
         for (Setting setting : this.settings)
             settings.put(setting.name, setting.value);
-        DefaultMutableTreeNode tree = new DefaultMutableTreeNode(Lang.APPLICATION_NAME);
 
+        Element section = document.createElement("section");
         //Calendar
-        if (settings.get("calendar")){
-            DefaultMutableTreeNode calendars = new DefaultMutableTreeNode(Lang.CALENDAR);
-            for (CalendarItemElement calendarEntry : service.getCalendar().getCalendars()) {
-                DefaultMutableTreeNode calendar = new DefaultMutableTreeNode(calendarEntry.getCalendar().getSummary());
-                for (Event eventEntry : calendarEntry.getEvents()) {
-                    DefaultMutableTreeNode event = new DefaultMutableTreeNode(eventEntry.getSummary());
-                    calendar.add(event);
+        if (settings.get("calendar")) {
+            Element ul = document.createElement("ul");
+            for (CalendarItemElement entry : service.getCalendar().getCalendars()) {
+                Element ul2 = document.createElement("ul");
+                for (Event entry2 : entry.getEvents()) {
+                    Element li2 = document.createElement("li");
+                    li2.appendChild(document.createTextNode(entry2.getSummary()));
+                    ul2.appendChild(li2);
                 }
-                calendars.add(calendar);
+                Element li = document.createElement("li");
+                li.appendChild(document.createTextNode(entry.getCalendar().getSummary()));
+                li.appendChild(ul2);
+                ul.appendChild(li);
             }
-            tree.add(calendars);
+            section.appendChild(generateCard(ul,"icon/Calendar.png", Lang.CALENDAR));
         }
 
         //Youtube
         if (settings.get("like")||settings.get("dislike")||settings.get("subscription")||settings.get("playlist")) {
-            DefaultMutableTreeNode youtube = new DefaultMutableTreeNode(Lang.YOUTUBE);
+            Element youtube = document.createElement("div");
             //like
             if (settings.get("like")) {
-                DefaultMutableTreeNode likes = new DefaultMutableTreeNode(Lang.LIKES);
-                for (String likeEntry : service.getYoutube().getLikes()) {
-                    DefaultMutableTreeNode like = new DefaultMutableTreeNode(likeEntry);
-                    likes.add(like);
+                Element ul = document.createElement("ul");
+                for (String entry : service.getYoutube().getLikes()) {
+                    Element li = document.createElement("li");
+                    li.appendChild(document.createTextNode(entry));
+                    ul.appendChild(li);
                 }
-                youtube.add(likes);
+                youtube.appendChild(generateCard(ul,"icon/Youtube.png", Lang.LIKES));
             }
             //dislike
             if (settings.get("dislike")) {
-                DefaultMutableTreeNode dislikes = new DefaultMutableTreeNode(Lang.DISLIKES);
-                for (String dislikeEntry : service.getYoutube().getDislikes()) {
-                    DefaultMutableTreeNode dislike = new DefaultMutableTreeNode(dislikeEntry);
-                    dislikes.add(dislike);
+                Element ul = document.createElement("ul");
+                for (String entry : service.getYoutube().getDislikes()) {
+                    Element li = document.createElement("li");
+                    li.appendChild(document.createTextNode(entry));
+                    ul.appendChild(li);
                 }
-                youtube.add(dislikes);
+                youtube.appendChild(generateCard(ul,"icon/Youtube.png", Lang.DISLIKES));
             }
             //subscription
             if (settings.get("subscription")) {
-                DefaultMutableTreeNode subscriptions = new DefaultMutableTreeNode(Lang.SUBSCRIPTIONS);
-                for (Subscription subscriptionEntry : service.getYoutube().getSubscriptions()) {
-                    DefaultMutableTreeNode subscription = new DefaultMutableTreeNode(subscriptionEntry.getSnippet().getResourceId().getChannelId());
-                    subscriptions.add(subscription);
+                Element ul = document.createElement("ul");
+                for (Subscription entry : service.getYoutube().getSubscriptions()) {
+                    Element li = document.createElement("li");
+                    li.appendChild(document.createTextNode(entry.getSnippet().getResourceId().getChannelId()));
+                    ul.appendChild(li);
                 }
-                youtube.add(subscriptions);
+                youtube.appendChild(generateCard(ul,"icon/Youtube.png", Lang.SUBSCRIPTIONS));
             }
             //playlist
             if (settings.get("playlist")) {
-                DefaultMutableTreeNode playlists = new DefaultMutableTreeNode(Lang.PLAYLISTS);
-                for (PlaylistElement playlistEntry : service.getYoutube().getPlaylists()) {
-                    DefaultMutableTreeNode playlist = new DefaultMutableTreeNode(playlistEntry.getPlaylist().getSnippet().getTitle());
-                    for (PlaylistItem itemEntry : playlistEntry.getItems()) {
-                        DefaultMutableTreeNode item = new DefaultMutableTreeNode(itemEntry.getSnippet().getResourceId().getVideoId());
-                        playlist.add(item);
+                Element ul = document.createElement("ul");
+                for (PlaylistElement entry : service.getYoutube().getPlaylists()) {
+                    Element ul2 = document.createElement("ul");
+                    for (PlaylistItem entry2 : entry.getItems()) {
+                        Element li2 = document.createElement("li");
+                        li2.appendChild(document.createTextNode(entry2.getSnippet().getResourceId().getVideoId()));
+                        ul2.appendChild(li2);
                     }
-                    playlists.add(playlist);
+                    Element li = document.createElement("li");
+                    li.appendChild(document.createTextNode(entry.getPlaylist().getSnippet().getTitle()));
+                    li.appendChild(ul2);
+                    ul.appendChild(li);
                 }
-                youtube.add(playlists);
+                youtube.appendChild(generateCard(ul,"icon/Youtube.png", Lang.PLAYLISTS));
             }
-            tree.add(youtube);
+            section.appendChild(youtube);
         }
 
-        //Panel
-        JPanel accountPanel = new JPanel();
-        accountPanel.setLayout(new BorderLayout());
-        accountPanel.add(
-                new JLabel(new ImageIcon(service.getUserPhoto())),
-                BorderLayout.WEST);
-        accountPanel.add(
-                new JLabel(
-                        "<html><font size=\"+2\">"+service.getUserName()+"</font><br/><i>"+service.getUserMail()+"</i></html>",
-                        SwingConstants.CENTER),
-                BorderLayout.CENTER);
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(accountPanel, BorderLayout.NORTH);
-        mainPanel.add(new JTree(tree), BorderLayout.CENTER);
-        return mainPanel;
+        Element h1 = document.createElement("h1");
+        h1.appendChild(document.createTextNode(service.getUserName()));
+        Element p = document.createElement("p");
+        p.appendChild(document.createTextNode(service.getUserMail()));
+        Element span = document.createElement("div");
+        span.appendChild(h1);
+        span.appendChild(p);
+        Element img = document.createElement("img");
+        Image image = service.getUserPhoto();
+        BufferedImage bImage = new BufferedImage(
+                image.getWidth(null),
+                image.getHeight(null),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D bGr = bImage.createGraphics();
+        bGr.drawImage(image, 0, 0, null);
+        bGr.dispose();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(bImage, "png", bos );
+        String encodedString = Base64
+                .getEncoder()
+                .encodeToString(bos.toByteArray());
+        img.setAttribute("src", "data:image/png;base64, "+encodedString);
+        Element header = document.createElement("header");
+        header.appendChild(img);
+        header.appendChild(span);
+        Element main = document.createElement("main");
+        main.appendChild(header);
+        main.appendChild(section);
+        return main;
+    }
+    private Element generateCard(Element element, String icon, String text) {
+        Element span = document.createElement("span");
+        span.appendChild(document.createTextNode(text));
+        Element img = document.createElement("img");
+        img.setAttribute("src", icon);
+        Element info = document.createElement("aside");
+        info.appendChild(img);
+        info.appendChild(span);
+        Element content = document.createElement("div");
+        content.appendChild(element);
+        Element article = document.createElement("article");
+        article.appendChild(info);
+        article.appendChild(content);
+        return article;
     }
 
     //Dialog Box
     private void showError(Exception e){
-        JOptionPane.showMessageDialog(null,
+        e.printStackTrace();
+        int integr = JOptionPane.showConfirmDialog(null,
                 e.getMessage(),
                 Lang.APPLICATION_NAME,
+                JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.ERROR_MESSAGE);
+        if(integr != 0)
+            exit(integr);
 
     }
     private boolean showQuestion(String message){
-        return 0 == JOptionPane.showConfirmDialog(null,
+        int integr = JOptionPane.showConfirmDialog(null,
                 message,
                 Lang.APPLICATION_NAME,
-                JOptionPane.YES_NO_OPTION,
+                JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
+        if(integr != 0 & integr != 1)
+            exit(0);
+        return 0 == integr;
+    }
+    private void showInfo(String message){
+        int integr = JOptionPane.showConfirmDialog(null,
+                message,
+                Lang.APPLICATION_NAME,
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE);
+        if(integr != 0)
+            exit(0);
+    }
+    private void exit(int status){
+        JOptionPane.showMessageDialog(null,
+                Lang.EXIT,
+                Lang.APPLICATION_NAME,
+                JOptionPane.INFORMATION_MESSAGE);
+        System.exit(status);
 
     }
+
 
     //Settings
     private static class Setting {
@@ -292,9 +404,4 @@ class Main extends JFrame {
             this.value = false;
         }
     }
-
-
-
-
-
 }
