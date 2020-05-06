@@ -1,7 +1,7 @@
 package fr.docjyJ.googleTransfer;
 
 public class Test {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         /* ====Sample test==== *
         Test all services with all parties
         new Service()
