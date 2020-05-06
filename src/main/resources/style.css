@@ -1,7 +1,48 @@
 body{
+    color: rgb(95, 99, 104);;
     margin: 0;
-    font-family: sans-serif;
+    font-family: Roboto, Arial, sans-serif;
+    font-size:16px;
+    font-stretch:100%;
+    font-style:normal;
+    font-variant-caps:normal;
+    font-variant-east-asian:normal;
+    font-variant-ligatures:normal;
+    font-variant-numeric:normal;
+    font-weight:400;
+    hyphens:manual;
+    letter-spacing:normal;
+    line-height:24px;
 }
+h1{
+    color: rgb(32, 33, 36);
+    font-size:28px;
+    line-heght:36px;
+}
+h2{
+    color:rgb(32, 33, 36);
+    font-size:22px;
+    line-height:28px;
+}
+a{
+    margin: 0 16px 16px;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all .3s ease-out;
+    color: rgb(26, 115, 232);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.25px;
+    line-height: 20px;
+    vertical-align: middle;
+    padding: 6px;
+    height: 20px;
+}
+a:hover{
+    background-color: #cecece;
+}
+
 main{
     width: calc(50% - 3px);
     display: inline-grid;
@@ -13,7 +54,7 @@ header{
     display: inherit;
     box-shadow: none;
     border: 1px solid #dfe1e5;
-    border-radius: 8px;
+    border-radius: 110px;
     padding: 10px;
 }
 header div{
@@ -26,6 +67,7 @@ header img {
     border-radius: 50%;
 }
 article{
+    transition: height 1s ease-in-out;
     box-shadow: none;
     border: 1px solid #dfe1e5;
     border-radius: 8px;
@@ -38,14 +80,23 @@ article div {
 }
 aside{
     border-right: 1px solid #dfe1e5;
-    width: 128px;
-    padding: 10px;
-    display: inline-grid;
-    align-content: center;
+    width: 96px;
+    display: inline-block;
     text-align: center;
 }
 aside img{
-    margin: 0 auto;
+    margin: 16px;
+}
+article ul {
+    display: block;
+    opacity: 100%;
+    transition: all 1s ease-in-out;
+    max-height: 100%;
+}
+article.hide ul {
+    display: grid;
+    max-height: 0;
+    opacity: 0;
 }
 li ul{
     background-color: white;
@@ -55,7 +106,7 @@ li ul{
     display: none;
     height: auto;
     opacity: 0;
-    transition: all 0.5s ease-in-out;
+    transition: all 1s ease-in-out;
     position: absolute;
 }
 li:hover ul, li:focus ul {

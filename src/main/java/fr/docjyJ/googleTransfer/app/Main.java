@@ -22,17 +22,22 @@ import javax.xml.transform.stream.StreamResult;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 
 class Main {
     private final Service serviceOld;
     private final Service serviceNew;
+    private final String YoutubeSTR;
+    private final String CalendarSTR;
+    private final Image YoutubePNG;
+    private final Image CalendarPNG;
     private List<Setting> settings;
 
     Document document;
 
-    //main/start
+    //main
     public static void main(String[] args) throws Exception {
         new Main().readActivity();
     }
@@ -41,6 +46,10 @@ class Main {
     private Main() throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         SwingUtilities.updateComponentTreeUI(new JFrame());
+        this.YoutubePNG = ImageIO.read(getClass().getResource("/icon/Youtube.png"));
+        this.CalendarPNG = ImageIO.read(getClass().getResource("/icon/Calendar.png"));
+        this.YoutubeSTR = createImageByte(YoutubePNG);
+        this.CalendarSTR = createImageByte(CalendarPNG);
         showInfo(Lang.FIRST_STEP);
         this.serviceOld = new Service();
         showInfo(Lang.SECOND_STEP);
@@ -162,72 +171,68 @@ class Main {
     }
 
     //Component
-    private void createRecourse(String resourcePath, String contentPath) throws Exception {
-        InputStream stream = Main.class.getResourceAsStream("/"+resourcePath);
-        if(stream == null) {
-            throw new IOException("Cannot get resource \"" + resourcePath + "\" from Jar file.");
-        }
-
-        int readBytes;
-        byte[] buffer = new byte[4096];
-        OutputStream resStreamOut = new FileOutputStream(contentPath);
-        while ((readBytes = stream.read(buffer)) > 0) {
-            resStreamOut.write(buffer, 0, readBytes);
-        }
-        stream.close();
-        stream.close();
-    }
     private void generatePage() throws Exception {
         document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         Element body = document.createElement("body");
         body.appendChild(generateAccount(serviceOld));
         body.appendChild(generateAccount(serviceNew));
-
+        Element script = document.createElement("script");
+        script.setAttribute("type", "text/javascript");
+        BufferedReader buf = new BufferedReader(new InputStreamReader(
+                new FileInputStream(getClass().getResource("/script.js").getFile())));
+        String line = buf.readLine();
+        StringBuilder sb = new StringBuilder();
+        while(line != null){
+            sb.append(line);
+            line = buf.readLine();
+        }
+        script.appendChild(document.createTextNode(sb.toString()));
+        body.appendChild(script);
         Element html = document.createElement("html");
         html.appendChild(generateHeader());
         html.appendChild(body);
         html.setAttribute("lang","en");
         document.appendChild(html);
-
-        String path = "GoogleDataTransferTemp"+new Date().getTime()+"/";
-        File htmlFile = new File(path);
-        if(!htmlFile.exists() & !htmlFile.mkdir())
-            throw new FileNotFoundException();
-        htmlFile = new File(path + "icon/");
-        if(htmlFile.exists() || htmlFile.mkdir()) {
-            createRecourse("icon/Youtube.png", path + "icon/Youtube.png");
-            createRecourse("icon/Calendar.png", path + "icon/Calendar.png");
-            createRecourse("style.css", path + "style.css");
-        }
+        String path ="Google_Data_Transfer_Generated_" +
+                new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(new Date().getTime()) +
+                ".html";
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.INDENT, "no");
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transformer.setOutputProperty(OutputKeys.METHOD, "html");
         DOMImplementation domImpl = document.getImplementation();
         DocumentType doctype = domImpl.createDocumentType("doctype","","");
         transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
         transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
-        htmlFile = new File(path + "index.html");
+        File htmlFile = new File(path);
         FileOutputStream outStream = new FileOutputStream(htmlFile);
         if(!htmlFile.exists() & !htmlFile.mkdir())
             throw new FileNotFoundException();
         transformer.transform(new DOMSource(document), new StreamResult(outStream));
         Desktop.getDesktop().browse(htmlFile.toURI());
     }
-    private Element generateHeader() {
+    private Element generateHeader() throws IOException {
         Element title = document.createElement("title");
         title.appendChild(document.createTextNode(Lang.APPLICATION_NAME));
         Element meta = document.createElement("meta");
-        meta.setAttribute("http-equiv", "Content-Type");
         meta.setAttribute("content", "text/html; charset=UTF-8");
-        Element link = document.createElement("link");
-        link.setAttribute("rel", "stylesheet");
-        link.setAttribute("type", "text/css");
-        link.setAttribute("href", "style.css");
+        meta.setAttribute("http-equiv", "Content-Type");
+        Element style = document.createElement("style");
+        style.setAttribute("type", "text/css");
+        BufferedReader buf = new BufferedReader(new InputStreamReader(
+                        new FileInputStream(getClass().getResource("/style.css").getFile())));
+        String line = buf.readLine();
+        StringBuilder sb = new StringBuilder();
+        while(line != null){
+            sb.append(line);
+            line = buf.readLine();
+        }
+        style.appendChild(document.createTextNode(sb.toString()));
         Element head = document.createElement("head");
         head.appendChild(meta);
-        head.appendChild(link);
+        head.appendChild(style);
         head.appendChild(title);
         return head;
     }
@@ -252,7 +257,7 @@ class Main {
                 li.appendChild(ul2);
                 ul.appendChild(li);
             }
-            section.appendChild(generateCard(ul,"icon/Calendar.png", Lang.CALENDAR));
+            section.appendChild(generateCard(ul,CalendarSTR, Lang.CALENDAR));
         }
 
         //Youtube
@@ -266,7 +271,7 @@ class Main {
                     li.appendChild(document.createTextNode(entry));
                     ul.appendChild(li);
                 }
-                youtube.appendChild(generateCard(ul,"icon/Youtube.png", Lang.LIKES));
+                youtube.appendChild(generateCard(ul, YoutubeSTR, Lang.LIKES));
             }
             //dislike
             if (settings.get("dislike")) {
@@ -276,7 +281,7 @@ class Main {
                     li.appendChild(document.createTextNode(entry));
                     ul.appendChild(li);
                 }
-                youtube.appendChild(generateCard(ul,"icon/Youtube.png", Lang.DISLIKES));
+                youtube.appendChild(generateCard(ul, YoutubeSTR, Lang.DISLIKES));
             }
             //subscription
             if (settings.get("subscription")) {
@@ -286,7 +291,7 @@ class Main {
                     li.appendChild(document.createTextNode(entry.getSnippet().getResourceId().getChannelId()));
                     ul.appendChild(li);
                 }
-                youtube.appendChild(generateCard(ul,"icon/Youtube.png", Lang.SUBSCRIPTIONS));
+                youtube.appendChild(generateCard(ul, YoutubeSTR, Lang.SUBSCRIPTIONS));
             }
             //playlist
             if (settings.get("playlist")) {
@@ -303,7 +308,7 @@ class Main {
                     li.appendChild(ul2);
                     ul.appendChild(li);
                 }
-                youtube.appendChild(generateCard(ul,"icon/Youtube.png", Lang.PLAYLISTS));
+                youtube.appendChild(generateCard(ul, YoutubeSTR, Lang.PLAYLISTS));
             }
             section.appendChild(youtube);
         }
@@ -316,7 +321,35 @@ class Main {
         span.appendChild(h1);
         span.appendChild(p);
         Element img = document.createElement("img");
-        Image image = service.getUserPhoto();
+        img.setAttribute("src", createImageByte(service.getUserPhoto()));
+        Element header = document.createElement("header");
+        header.appendChild(img);
+        header.appendChild(span);
+        Element main = document.createElement("main");
+        main.appendChild(header);
+        main.appendChild(section);
+        return main;
+    }
+    private Element generateCard(Element element, String icon, String text) {
+        Element h2 = document.createElement("h2");
+        h2.appendChild(document.createTextNode(text));
+        Element img = document.createElement("img");
+        img.setAttribute("src", icon);
+        Element a = document.createElement("a");
+        a.setAttribute("class", "hider");
+        a.appendChild(document.createTextNode(Lang.HIDE_BUTTON));
+        Element info = document.createElement("aside");
+        info.appendChild(img);
+        info.appendChild(a);
+        Element content = document.createElement("div");
+        content.appendChild(h2);
+        content.appendChild(element);
+        Element article = document.createElement("article");
+        article.appendChild(info);
+        article.appendChild(content);
+        return article;
+    }
+    private String createImageByte(Image image) throws IOException {
         BufferedImage bImage = new BufferedImage(
                 image.getWidth(null),
                 image.getHeight(null),
@@ -329,29 +362,7 @@ class Main {
         String encodedString = Base64
                 .getEncoder()
                 .encodeToString(bos.toByteArray());
-        img.setAttribute("src", "data:image/png;base64, "+encodedString);
-        Element header = document.createElement("header");
-        header.appendChild(img);
-        header.appendChild(span);
-        Element main = document.createElement("main");
-        main.appendChild(header);
-        main.appendChild(section);
-        return main;
-    }
-    private Element generateCard(Element element, String icon, String text) {
-        Element span = document.createElement("span");
-        span.appendChild(document.createTextNode(text));
-        Element img = document.createElement("img");
-        img.setAttribute("src", icon);
-        Element info = document.createElement("aside");
-        info.appendChild(img);
-        info.appendChild(span);
-        Element content = document.createElement("div");
-        content.appendChild(element);
-        Element article = document.createElement("article");
-        article.appendChild(info);
-        article.appendChild(content);
-        return article;
+        return "data:image/png;base64, "+encodedString;
     }
 
     //Dialog Box
