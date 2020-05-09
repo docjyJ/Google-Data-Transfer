@@ -4,7 +4,6 @@ import com.google.api.client.util.ArrayMap;
 import fr.docjyJ.googleTransfer.api.Utils.IdKeyElement;
 import fr.docjyJ.googleTransfer.api.Utils.Service;
 import freemarker.template.*;
-import org.w3c.dom.Document;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -18,13 +17,12 @@ import java.util.*;
 public class Main {
     private final Service serviceOld;
     private final Service serviceNew;
-    private final String IconYoutube;
     private final String IconCalendar;
+    private final String IconYoutube;
+    private final String IconGmail;
     private List<Setting> settings;
     Map<String, List<IdKeyElement>> newValues;
     Map<String, List<IdKeyElement>> oldValues;
-
-    Document document;
 
     //main
     public static void main(String[] args) throws Exception {
@@ -35,10 +33,9 @@ public class Main {
     private Main() throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         SwingUtilities.updateComponentTreeUI(new JFrame());
-        Image youtubePNG = ImageIO.read(getClass().getResource("/icon/Youtube.png"));
-        Image calendarPNG = ImageIO.read(getClass().getResource("/icon/Calendar.png"));
-        this.IconYoutube = createImageByte(youtubePNG);
-        this.IconCalendar = createImageByte(calendarPNG);
+        this.IconYoutube = createImageByte(ImageIO.read(getClass().getResource("/icon/Youtube.png")));
+        this.IconCalendar = createImageByte(ImageIO.read(getClass().getResource("/icon/Calendar.png")));
+        this.IconGmail = createImageByte(ImageIO.read(getClass().getResource("/icon/Gmail.png")));
         showInfo(Lang.FIRST_STEP);
         this.serviceOld = new Service();
         showInfo(Lang.SECOND_STEP);
@@ -52,23 +49,31 @@ public class Main {
                 new Setting("like", Lang.LIKES, IconYoutube),
                 new Setting("dislike", Lang.DISLIKES, IconYoutube),
                 new Setting("subscription", Lang.SUBSCRIPTIONS, IconYoutube),
-                new Setting("playlist", Lang.PLAYLISTS, IconYoutube));
+                new Setting("playlist", Lang.PLAYLISTS, IconYoutube),
+                new Setting("label", Lang.LABELS, IconGmail),
+                new Setting("filter", Lang.FILTERS, IconGmail));
         for (Setting setting: settings) {
             switch (setting.name){
                 case "calendar" :
                     setting.value = showQuestion(Lang.ASK_CALENDARS);
                     break;
                 case "like" :
-                    setting.value = showQuestion(Lang.ASK_LIKE);
+                    setting.value = showQuestion(Lang.ASK_LIKES);
                     break;
                 case "dislike" :
-                    setting.value = showQuestion(Lang.ASK_DISLIKE);
+                    setting.value = showQuestion(Lang.ASK_DISLIKES);
                     break;
                 case "subscription" :
-                    setting.value = showQuestion(Lang.ASK_SUBSCRIPTION);
+                    setting.value = showQuestion(Lang.ASK_SUBSCRIPTIONS);
                     break;
                 case "playlist" :
-                    setting.value = showQuestion(Lang.ASK_PLAYLIST);
+                    setting.value = showQuestion(Lang.ASK_PLAYLISTS);
+                    break;
+                case "label" :
+                    setting.value = showQuestion(Lang.ASK_LABELS);
+                    break;
+                case "filter" :
+                    setting.value = showQuestion(Lang.ASK_FILTERS);
                     break;
             }
         }
@@ -97,6 +102,14 @@ public class Main {
                         case "playlist" :
                             newValues.put("playlist", serviceNew.getYoutube().readPlaylist().getPlaylists());
                             oldValues.put("playlist", serviceOld.getYoutube().readPlaylist().getPlaylists());
+                            break;
+                        case "label" :
+                            newValues.put("label", serviceNew.getGmail().readLabels().getLabels());
+                            oldValues.put("label", serviceOld.getGmail().readLabels().getLabels());
+                            break;
+                        case "filter" :
+                            newValues.put("filter", serviceNew.getGmail().readFilters().getFilters());
+                            oldValues.put("filter", serviceOld.getGmail().readFilters().getFilters());
                             break;
                     }
                 } catch (IOException e) {
@@ -150,6 +163,18 @@ public class Main {
                                     .readPlaylist()
                                     .getPlaylists());
                             break;
+                        case "label" :
+                            newValues.replace("label", serviceNew.getGmail()
+                                    .putLabels(serviceOld.getGmail().getLabels())
+                                    .readLabels()
+                                    .getLabels());
+                            break;
+                        case "filter" :
+                            newValues.replace("filter", serviceNew.getGmail()
+                                    .putFilters(serviceOld.getGmail().getLabels())
+                                    .readFilters()
+                                    .getFilters());
+                            break;
                     }
                 } catch (IOException e) {
                     showError(e);
@@ -182,6 +207,7 @@ public class Main {
         input.put("services", Arrays.asList(oldValues,newValues));
         input.put("style", createStringFile("/style.css"));
         input.put("script", createStringFile("/script.js"));
+        input.put("hide", Lang.HIDE_BUTTON);
         File file =new File("Google_Data_Transfer_Generated_" +
                 new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(new Date().getTime()) +
                 ".html");

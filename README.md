@@ -9,13 +9,13 @@ Transfer Google data from one account to another.
     * playlists
 * Google Calendar **(some timeout problem with API)**
     * calendar and events
+* Gmail **(WIP)**
+    * filters
+    * settings
 
 ### Work in progress
 * Contacts
     * contacts
-* Gmail
-    * filters
-    * settings
 * Google Drive
     * clone files
 * Google Fit

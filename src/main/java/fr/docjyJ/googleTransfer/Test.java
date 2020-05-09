@@ -1,7 +1,12 @@
 package fr.docjyJ.googleTransfer;
 
+import fr.docjyJ.googleTransfer.api.Utils.Service;
+
 public class Test {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        new Service().getGmail()
+                .readAll()
+                .print();
         /* ====Sample test==== *
         Test all services with all parties
         new Service()

@@ -17,14 +17,22 @@ class Lang {
     static final String SUBSCRIPTIONS = YOUTUBE+" subscribed channel's";
     static final String PLAYLISTS = YOUTUBE+" playlist's";
     static final String ASK_YOUTUBE = "Do you want to start "+YOUTUBE+" service?";
-    static final String ASK_LIKE = "Do you want to transfer "+LIKES+"?";
-    static final String ASK_DISLIKE = "Do you want to transfer "+DISLIKES+"?";
-    static final String ASK_SUBSCRIPTION = "Do you want to transfer "+SUBSCRIPTIONS+"?";
-    static final String ASK_PLAYLIST = "Do you want to transfer "+PLAYLISTS+"?";
+    static final String ASK_LIKES = "Do you want to transfer "+LIKES+"?";
+    static final String ASK_DISLIKES = "Do you want to transfer "+DISLIKES+"?";
+    static final String ASK_SUBSCRIPTIONS = "Do you want to transfer "+SUBSCRIPTIONS+"?";
+    static final String ASK_PLAYLISTS = "Do you want to transfer "+PLAYLISTS+"?";
 
     //Google Calendar
     static final String CALENDAR = "Google Calendar";
     static final String CALENDARS = CALENDAR+" calendar's";
     static final String ASK_CALENDAR = "Do you want to start "+CALENDAR+" service?";
     static final String ASK_CALENDARS = "Do you want to transfer "+CALENDARS+"?";
+
+    //Gmail
+    static final String GMAIL = "Gmail";
+    static final String LABELS = GMAIL+" label's";
+    static final String FILTERS = GMAIL+" filter's";
+    static final String ASK_GMAIL = "Do you want to start "+GMAIL+" service?";
+    static final String ASK_LABELS = "Do you want to transfer "+LABELS+"?";
+    static final String ASK_FILTERS = "Do you want to transfer "+FILTERS+"?";
 }

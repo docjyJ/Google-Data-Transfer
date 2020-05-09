@@ -22,10 +22,10 @@
                     <article>
                         <aside>
                             <img src="${setting.image}" alt="">
-                            <a class="hider">Hide</a>
+                            <a class="hider">${hide}</a>
                         </aside>
                         <div>
-                            <h2>Google Calendar calendar's</h2>
+                            <h2>${setting.lang}</h2>
                             <ul>
                                 <#list service[setting.name] as entry>
                                     <li>
@@ -37,10 +37,10 @@
                                             <#case "subscription">
                                                 <a href="${"https://www.youtube.com/channel/"+entry.id}">${entry.name}</a>
                                                 <#break>
-                                            <#case "large">
+                                            <#case "playlist">
                                                 <a href="${"https://www.youtube.com/playlist?list="+entry.id}">${entry.name}</a>
                                                 <#break>
-                                            <#case "large">
+                                            <#case "calendar">
                                                 <a href="${"https://calendar.google.com/calendar/embed?src="+entry.id}">${entry.name}</a>
                                                 <#break>
                                             <#default>
