@@ -24,7 +24,6 @@ public class GoogleTransfer {
         return this;
     }
     public GoogleTransfer generate() throws IOException {
-        this.file.createNewFile();
         FileWriter writer = new FileWriter(this.file);
         writer.write(this.toJson());
         writer.close();
@@ -37,6 +36,16 @@ public class GoogleTransfer {
     }
     public static void logPrint(Object object){
         System.out.println(object);
+    }
+    public static void logPrint(String methode, String type, String element){
+        System.out.println(
+                methode+": "+type+"-["+element+"]"
+        );
+    }
+    public static void logPrint(String methode, String type, String element, String element2){
+        System.out.println(
+                methode+": "+type+"-["+element+"]-["+element2+"]"
+        );
     }
 
 }

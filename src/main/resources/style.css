@@ -1,4 +1,6 @@
-body{
+a, body{
+    display: block;
+    text-decoration: none;
     color: rgb(95, 99, 104);;
     margin: 0;
     font-family: Roboto, Arial, sans-serif;
@@ -24,7 +26,7 @@ h2{
     font-size:22px;
     line-height:28px;
 }
-a{
+aside a{
     margin: 0 16px 16px;
     display: inline-block;
     cursor: pointer;
@@ -39,7 +41,7 @@ a{
     padding: 6px;
     height: 20px;
 }
-a:hover{
+aside a:hover{
     background-color: #cecece;
 }
 
