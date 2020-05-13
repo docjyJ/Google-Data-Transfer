@@ -7,10 +7,11 @@
     <title>${title}</title>
 </head>
 <body>
+<div class="warning">${warning}</div>
 <#list services as service>
     <main>
         <header>
-            <img src="${service["ACCOUNT"][0].object}">
+            <img src="${service["ACCOUNT"][0].object}" alt="${service["ACCOUNT"][0].id}">
             <div>
                 <h1>${service["ACCOUNT"][0].name}</h1>
                 <p>${service["ACCOUNT"][0].id}</p>
@@ -21,7 +22,7 @@
                 <#if setting.value>
                     <article>
                         <aside>
-                            <img src="${setting.image}" alt="">
+                            <img src="${setting.image}" alt="${setting.name}">
                             <a class="hider">${hide}</a>
                         </aside>
                         <div>

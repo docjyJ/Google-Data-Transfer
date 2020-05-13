@@ -33,6 +33,7 @@ public class Main {
     private Main() throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         SwingUtilities.updateComponentTreeUI(new JFrame());
+        showWarn(Lang.WARNING);
         this.IconYoutube = createImageByte(ImageIO.read(getClass().getResource("/icon/Youtube.png")));
         this.IconCalendar = createImageByte(ImageIO.read(getClass().getResource("/icon/Calendar.png")));
         this.IconGmail = createImageByte(ImageIO.read(getClass().getResource("/icon/Gmail.png")));
@@ -208,6 +209,7 @@ public class Main {
         input.put("style", createStringFile("/style.css"));
         input.put("script", createStringFile("/script.js"));
         input.put("hide", Lang.HIDE_BUTTON);
+        input.put("warning", Lang.WARNING);
         File file =new File("Google_Data_Transfer_Generated_" +
                 new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(new Date().getTime()) +
                 ".html");
@@ -256,23 +258,33 @@ public class Main {
             exit(integr);
 
     }
+    private void showWarn(String message){
+        int integer = JOptionPane.showConfirmDialog(null,
+                message,
+                Lang.APPLICATION_NAME,
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+        if(integer != 0)
+            exit(integer);
+
+    }
     private boolean showQuestion(String message){
-        int integr = JOptionPane.showConfirmDialog(null,
+        int integer = JOptionPane.showConfirmDialog(null,
                 message,
                 Lang.APPLICATION_NAME,
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
-        if(integr != 0 & integr != 1)
+        if(integer != 0 & integer != 1)
             exit(0);
-        return 0 == integr;
+        return 0 == integer;
     }
     private void showInfo(String message){
-        int integr = JOptionPane.showConfirmDialog(null,
+        int integer = JOptionPane.showConfirmDialog(null,
                 message,
                 Lang.APPLICATION_NAME,
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.INFORMATION_MESSAGE);
-        if(integr != 0)
+        if(integer != 0)
             exit(0);
     }
     private void exit(int status){

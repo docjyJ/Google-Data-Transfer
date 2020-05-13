@@ -16,6 +16,24 @@ a, body{
     letter-spacing:normal;
     line-height:24px;
 }
+.warning {
+    background: #fce8e6;
+    color: #d50000;
+    border-bottom: #d50000 solid 1px;
+    margin: 0;
+    padding: 16px 76px;
+}
+.warning:before {
+    float: left;
+    margin-left: -36px;
+    content: "⚠";
+    text-rendering: optimizeLegibility;
+    text-transform: none;
+    word-wrap: normal;
+    box-sizing: inherit;
+    font-size: 200%;
+}
+
 h1{
     color: rgb(32, 33, 36);
     font-size:28px;

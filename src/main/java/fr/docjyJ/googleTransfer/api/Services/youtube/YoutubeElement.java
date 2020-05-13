@@ -176,7 +176,6 @@ public class YoutubeElement extends GoogleTransfer {
                     .execute()
                     .getId();
             for (IdKeyElement item :playlist.getContent()){
-
                 logPrint("READ", "playlist",playlist.getName(),item.getName());
                 service.playlistItems()
                         .insert("snippet", (PlaylistItem) item.getObject())

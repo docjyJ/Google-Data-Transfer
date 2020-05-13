@@ -1,6 +1,7 @@
 package fr.docjyJ.googleTransfer.app;
 
 class Lang {
+    static final String WARNING = "This app is neither created nor endorsed by Google.";
     static final String HIDE_BUTTON = "Hide";
     static final String APPLICATION_NAME = "Google Data Transfer";
     static final String FIRST_STEP = "First we will connect to the account that contains the data.";
