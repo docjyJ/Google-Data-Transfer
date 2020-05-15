@@ -1,5 +1,5 @@
 (function (){
-    document.querySelectorAll('aside a').forEach(item => {
+    document.querySelectorAll('.hider').forEach(item => {
         item.addEventListener('click', event => {
             event.preventDefault();
             var element = event.target.parentNode.parentNode.classList;

@@ -48,7 +48,8 @@ h2{
     font-size:22px;
     line-height:28px;
 }
-aside a{
+article>aside>a,
+article>div>a{
     margin: 0 16px 16px;
     display: inline-block;
     cursor: pointer;
@@ -63,7 +64,8 @@ aside a{
     padding: 6px;
     height: 20px;
 }
-aside a:hover{
+article>aside>a:hover,
+article>div>a:hover{
     background-color: #cecece;
 }
 
@@ -112,16 +114,16 @@ aside{
 aside img{
     margin: 16px;
 }
+article>aside>a,
+article.hide>div>a,
 article ul {
     display: block;
-    opacity: 100%;
-    transition: all 1s ease-in-out;
-    max-height: 100%;
 }
+article.empty>aside>a,
+article.hide>aside>a,
+article>div>a,
 article.hide ul {
-    display: grid;
-    max-height: 0;
-    opacity: 0;
+    display: none;
 }
 li ul{
     background-color: white;

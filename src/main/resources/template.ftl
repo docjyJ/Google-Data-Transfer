@@ -5,28 +5,36 @@
         ${style}
     </style>
     <title>${title}</title>
+    <#function class bool>
+        <#if bool>
+            <#return "hide" />
+        <#else>
+            <#return "empty" />
+        </#if>
+    </#function>
 </head>
 <body>
 <div class="warning">${warning}</div>
 <#list services as service>
     <main>
         <header>
-            <img src="${service["ACCOUNT"][0].object}" alt="${service["ACCOUNT"][0].id}">
+            <img src="${service["PHOTO"]}" alt="${service["ACCOUNT"].mail}">
             <div>
-                <h1>${service["ACCOUNT"][0].name}</h1>
-                <p>${service["ACCOUNT"][0].id}</p>
+                <h1>${service["ACCOUNT"].name}</h1>
+                <p>${service["ACCOUNT"].mail}</p>
             </div>
         </header>
         <section>
             <#list settings as setting>
                 <#if setting.value>
-                    <article>
+                    <article class="${class(service[setting.name]?has_content)}">
                         <aside>
                             <img src="${setting.image}" alt="${setting.name}">
                             <a class="hider">${hide}</a>
                         </aside>
                         <div>
                             <h2>${setting.lang}</h2>
+                            <a class="hider">${show}</a>
                             <ul>
                                 <#list service[setting.name] as entry>
                                     <li>
@@ -62,10 +70,14 @@
                                                                 ${entrybis.name}
                                                         </#switch>
                                                     </li>
+                                                <#else>
+                                                    <span>${empty}</span>
                                                 </#list>
                                             </ul>
                                         </#if>
                                     </li>
+                                <#else>
+                                    <span>${empty}</span>
                                 </#list>
                             </ul>
                         </div>

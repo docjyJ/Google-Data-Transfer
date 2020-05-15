@@ -1,9 +1,11 @@
 package fr.docjyJ.googleTransfer.app;
 
 import com.google.api.client.util.ArrayMap;
-import fr.docjyJ.googleTransfer.api.Utils.TemplateObject;
 import fr.docjyJ.googleTransfer.api.Utils.Service;
-import freemarker.template.*;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -198,18 +200,21 @@ public class Main {
         cfg.setClassForTemplateLoading(this.getClass(), "/");
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        newValues.put("ACCOUNT", Collections.singletonList(new TemplateObject<>(
-                serviceNew.getUserMail(), serviceNew.getUserName(), createImageByte(serviceNew.getUserPhoto()))));
-        oldValues.put("ACCOUNT", Collections.singletonList(new TemplateObject<>(
-                serviceOld.getUserMail(), serviceOld.getUserName(), createImageByte(serviceOld.getUserPhoto()))));
+        newValues.put("ACCOUNT", serviceNew.getUser());
+        oldValues.put("ACCOUNT", serviceOld.getUser());
+        newValues.put("PHOTO", createImageByte(serviceNew.getUser().getPhoto()));
+        oldValues.put("PHOTO", createImageByte(serviceOld.getUser().getPhoto()));
         Map<String, Object> input = new ArrayMap<>();
-        input.put("title", Lang.APPLICATION_NAME);
         input.put("settings", settings);
         input.put("services", Arrays.asList(oldValues,newValues));
         input.put("style", createStringFile("/style.css"));
         input.put("script", createStringFile("/script.js"));
+        input.put("title", Lang.APPLICATION_NAME);
         input.put("hide", Lang.HIDE_BUTTON);
+        input.put("show", Lang.SHOW_BUTTON);
         input.put("warning", Lang.WARNING);
+        input.put("empty", Lang.EMPTY);
+
         File file =new File("Google_Data_Transfer_Generated_" +
                 new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(new Date().getTime()) +
                 ".html");
