@@ -1,4 +1,4 @@
-package fr.docjyJ.googleTransfer.api.Services.gmail;
+package fr.docjyJ.googleTransfer.api.Services;
 
 import com.google.api.client.util.ArrayMap;
 import com.google.api.services.gmail.Gmail;
@@ -12,17 +12,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-public class GmailElement extends GoogleTransfer {
+public class GmailElement extends GoogleTransfer<Gmail> {
     //ELEMENT
-    protected transient Gmail service;
     protected List<TemplateObject<Label>> labels;
     protected List<TemplateObject<Filter>> filters;
     protected transient Map<String,String> labelCorrection;
 
     //CONSTRUCTOR
-    public GmailElement(Gmail service) {
-        this.service = service;
+    public GmailElement(Gmail gmail) {
+        super(gmail);
     }
 
     //READ
@@ -55,16 +55,15 @@ public class GmailElement extends GoogleTransfer {
                 .users().settings().filters()
                 .list("me")
                 .execute();
-        if(request.getFilter() != null)
-            for (Filter filter : request.getFilter()) {
-                logPrint("READ", "filter",filter.getCriteria().toString()+">"+filter.getAction().toString());
-                this.filters.add(new TemplateObject<>(
-                        filter.getId(),
-                        filter.getCriteria().toString()+">"+filter.getAction().toString(),
-                        new Filter()
-                                .setCriteria(filter.getCriteria())
-                                .setAction(filter.getAction())));
-            }
+        for (Filter filter : Objects.requireNonNull(request.getFilter())) {
+            logPrint("READ", "filter", filter.getCriteria().toString() + ">" + filter.getAction().toString());
+            this.filters.add(new TemplateObject<>(
+                    filter.getId(),
+                    filter.getCriteria().toString() + ">" + filter.getAction().toString(),
+                    new Filter()
+                            .setCriteria(filter.getCriteria())
+                            .setAction(filter.getAction())));
+        }
         return this;
     }
 
@@ -97,9 +96,6 @@ public class GmailElement extends GoogleTransfer {
     }
 
     //GET
-    public Gmail getService() {
-        return service;
-    }
     public List<TemplateObject<Label>> getLabels() {
         return labels;
     }

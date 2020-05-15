@@ -1,4 +1,4 @@
-package fr.docjyJ.googleTransfer.api.Services.calendar;
+package fr.docjyJ.googleTransfer.api.Services;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
@@ -13,14 +13,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CalendarElement extends GoogleTransfer {
+public class CalendarElement extends GoogleTransfer<Calendar> {
     //ELEMENT
-    protected transient Calendar service;
     protected List<TemplateObjectContent<MyCalendar,Event>> calendars;
 
     //CONSTRUCTOR
-    public CalendarElement(Calendar service) {
-        this.service = service;
+    public CalendarElement(Calendar calendar) {
+        super(calendar);
     }
 
     //READ
@@ -145,9 +144,6 @@ public class CalendarElement extends GoogleTransfer {
     }
 
     //GET
-    public Calendar getService() {
-        return service;
-    }
     public List<TemplateObjectContent<MyCalendar, Event>> getCalendars() {
         return calendars;
     }

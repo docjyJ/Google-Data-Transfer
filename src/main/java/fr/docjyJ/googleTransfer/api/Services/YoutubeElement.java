@@ -1,4 +1,4 @@
-package fr.docjyJ.googleTransfer.api.Services.youtube;
+package fr.docjyJ.googleTransfer.api.Services;
 
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;
@@ -10,17 +10,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class YoutubeElement extends GoogleTransfer {
+public class YoutubeElement extends GoogleTransfer<YouTube> {
     //ELEMENT
-    protected transient YouTube service;
     protected List<TemplateObject<String>> likes;
     protected List<TemplateObject<String>> dislikes;
     protected List<TemplateObject<Subscription>> subscriptions;
     protected List<TemplateObjectContent<Playlist,PlaylistItem>> playlists;
 
     //CONSTRUCTOR
-    public YoutubeElement(YouTube service) {
-        this.service = service;
+    public YoutubeElement(YouTube youTube) {
+        super(youTube);
     }
 
     //READ

@@ -1,15 +1,14 @@
-package fr.docjyJ.googleTransfer.api.Services.drive;
+package fr.docjyJ.googleTransfer.api.Services;
 
 import com.google.api.services.drive.Drive;
 import fr.docjyJ.googleTransfer.api.Utils.GoogleTransfer;
 
-public class DriveElement extends GoogleTransfer {
+public class DriveElement extends GoogleTransfer<Drive> {
     //ELEMENT
-    protected transient Drive service;
 
     //CONSTRUCTOR
-    public DriveElement(Drive service) {
-        this.service = service;
+    public DriveElement(Drive drive) {
+        super(drive);
     }
 
     //READ
@@ -23,8 +22,5 @@ public class DriveElement extends GoogleTransfer {
     }
 
     //GET
-    public Drive getService() {
-        return service;
-    }
 
 }

@@ -1,4 +1,4 @@
-package fr.docjyJ.googleTransfer.api.Services.contact;
+package fr.docjyJ.googleTransfer.api.Services;
 
 import com.google.api.services.people.v1.PeopleService;
 import com.google.gdata.data.Person;
@@ -7,14 +7,13 @@ import fr.docjyJ.googleTransfer.api.Utils.GoogleTransfer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactElement extends GoogleTransfer {
+public class ContactElement extends GoogleTransfer<PeopleService> {
     //ELEMENT
-    protected transient PeopleService service;
     protected List<Person> contacts;
 
     //CONSTRUCTOR
-    public ContactElement(PeopleService service) {
-        this.service = service;
+    public ContactElement(PeopleService peopleService) {
+        super(peopleService);
     }
 
     //READ
@@ -36,9 +35,6 @@ public class ContactElement extends GoogleTransfer {
     }
 
     //GET
-    public PeopleService getService() {
-        return service;
-    }
     public List<Person> getContacts() {
         return contacts;
     }
