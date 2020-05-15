@@ -17,11 +17,15 @@ a, body{
     line-height:24px;
 }
 .warning {
+    position: fixed;
     background: #fce8e6;
     color: #d50000;
     border-bottom: #d50000 solid 1px;
     margin: 0;
     padding: 16px 76px;
+    top: 0;
+    width: 100%;
+    z-index: 10;
 }
 .warning:before {
     float: left;
@@ -64,6 +68,7 @@ aside a:hover{
 }
 
 main{
+    margin-top: 56px;
     width: calc(50% - 3px);
     display: inline-grid;
 }

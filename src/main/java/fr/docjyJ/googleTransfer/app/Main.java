@@ -1,7 +1,7 @@
 package fr.docjyJ.googleTransfer.app;
 
 import com.google.api.client.util.ArrayMap;
-import fr.docjyJ.googleTransfer.api.Utils.IdKeyElement;
+import fr.docjyJ.googleTransfer.api.Utils.TemplateObject;
 import fr.docjyJ.googleTransfer.api.Utils.Service;
 import freemarker.template.*;
 
@@ -21,8 +21,8 @@ public class Main {
     private final String IconYoutube;
     private final String IconGmail;
     private List<Setting> settings;
-    Map<String, List<IdKeyElement>> newValues;
-    Map<String, List<IdKeyElement>> oldValues;
+    Map<String, Object> newValues;
+    Map<String, Object> oldValues;
 
     //main
     public static void main(String[] args) throws Exception {
@@ -172,7 +172,7 @@ public class Main {
                             break;
                         case "filter" :
                             newValues.replace("filter", serviceNew.getGmail()
-                                    .putFilters(serviceOld.getGmail().getLabels())
+                                    .putFilters(serviceOld.getGmail().getFilters())
                                     .readFilters()
                                     .getFilters());
                             break;
@@ -198,9 +198,9 @@ public class Main {
         cfg.setClassForTemplateLoading(this.getClass(), "/");
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        newValues.put("ACCOUNT", Collections.singletonList(new IdKeyElement(
+        newValues.put("ACCOUNT", Collections.singletonList(new TemplateObject<>(
                 serviceNew.getUserMail(), serviceNew.getUserName(), createImageByte(serviceNew.getUserPhoto()))));
-        oldValues.put("ACCOUNT", Collections.singletonList(new IdKeyElement(
+        oldValues.put("ACCOUNT", Collections.singletonList(new TemplateObject<>(
                 serviceOld.getUserMail(), serviceOld.getUserName(), createImageByte(serviceOld.getUserPhoto()))));
         Map<String, Object> input = new ArrayMap<>();
         input.put("title", Lang.APPLICATION_NAME);

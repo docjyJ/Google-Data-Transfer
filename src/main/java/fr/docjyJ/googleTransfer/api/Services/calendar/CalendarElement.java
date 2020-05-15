@@ -6,7 +6,8 @@ import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 import fr.docjyJ.googleTransfer.api.Utils.GoogleTransfer;
-import fr.docjyJ.googleTransfer.api.Utils.IdKeyElement;
+import fr.docjyJ.googleTransfer.api.Utils.TemplateObject;
+import fr.docjyJ.googleTransfer.api.Utils.TemplateObjectContent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.List;
 public class CalendarElement extends GoogleTransfer {
     //ELEMENT
     protected transient Calendar service;
-    protected List<IdKeyElement> calendars;
+    protected List<TemplateObjectContent<MyCalendar,Event>> calendars;
 
     //CONSTRUCTOR
     public CalendarElement(Calendar service) {
@@ -60,7 +61,7 @@ public class CalendarElement extends GoogleTransfer {
                         .setNotificationSettings(value.getNotificationSettings())
                         .setSelected(value.getSelected())
                         .setSummaryOverride(value.getSummaryOverride());
-                List<IdKeyElement> events = new ArrayList<>();
+                List<TemplateObject<Event>> events = new ArrayList<>();
                 Events request2 = new Events().setNextPageToken(" ");
                 while (request2.getNextPageToken()!=null && !request2.getNextPageToken().isEmpty()) {
                     Calendar.Events.List temp = this.service.events()
@@ -72,7 +73,7 @@ public class CalendarElement extends GoogleTransfer {
                     for( Event value2 : request2.getItems()) {
                         CalendarElement.logPrint("READ", "calendar",
                                 value.getSummary(), value2.getSummary());
-                        events.add(new IdKeyElement(
+                        events.add(new TemplateObject<>(
                             value2.getHtmlLink(),
                             value2.getSummary(),
                             new Event()
@@ -100,11 +101,10 @@ public class CalendarElement extends GoogleTransfer {
                                 .setTransparency(value2.getTransparency())));
                     }
                 }
-                this.calendars.add(new IdKeyElement(
+                this.calendars.add(new TemplateObjectContent<>(
                         value.getId(),
                         value.getSummary(),
-                        calendar,
-                        calendarList,
+                        new MyCalendar(calendar, calendarList),
                         events));
             }
         }
@@ -115,27 +115,27 @@ public class CalendarElement extends GoogleTransfer {
     public CalendarElement putAll(CalendarElement data) throws IOException {
         return this.putCalendars(data.getCalendars());
     }
-    public CalendarElement putCalendars(List<IdKeyElement> data) throws IOException {
-        for (IdKeyElement calendar: data) {
+    public CalendarElement putCalendars(List<TemplateObjectContent<MyCalendar,Event>> data) throws IOException {
+        for (TemplateObjectContent<MyCalendar,Event> calendar: data) {
             CalendarElement.logPrint("PUT", "calendar", calendar.getName());
             String id = "primary";
             if(!calendar.getName().equals(id))
                 id = service.calendars()
-                        .insert((com.google.api.services.calendar.model.Calendar) calendar.getObject())
+                        .insert(calendar.getObject().getCalendar())
                         .execute()
                         .getId();
             service.calendars()
-                    .update(id,(com.google.api.services.calendar.model.Calendar) calendar.getObject())
+                    .update(id, calendar.getObject().getCalendar())
                     .execute();
             service.calendarList()
-                    .update(id, (CalendarListEntry) calendar.getObject2())
+                    .update(id, calendar.getObject().getCalendarList())
                     .setColorRgbFormat(true)
                     .execute();
-            for (IdKeyElement event :calendar.getContent()){
+            for (TemplateObject<Event> event :calendar.getContent()){
                 CalendarElement.logPrint("PUT", "calendar",
                         calendar.getName(), event.getName());
                 service.events()
-                        .insert(id, (Event) event.getObject())
+                        .insert(id, event.getObject())
                         .setSupportsAttachments(true)
                         .execute();
 
@@ -148,7 +148,26 @@ public class CalendarElement extends GoogleTransfer {
     public Calendar getService() {
         return service;
     }
-    public List<IdKeyElement> getCalendars() {
+    public List<TemplateObjectContent<MyCalendar, Event>> getCalendars() {
         return calendars;
+    }
+
+    //OBJECT
+    public static class MyCalendar{
+        com.google.api.services.calendar.model.Calendar calendar;
+        CalendarListEntry calendarList;
+
+        public MyCalendar(com.google.api.services.calendar.model.Calendar calendar, CalendarListEntry calendarList) {
+            this.calendar = calendar;
+            this.calendarList = calendarList;
+        }
+
+        public com.google.api.services.calendar.model.Calendar getCalendar() {
+            return calendar;
+        }
+
+        public CalendarListEntry getCalendarList() {
+            return calendarList;
+        }
     }
 }

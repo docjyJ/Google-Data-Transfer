@@ -6,7 +6,7 @@ import com.google.api.services.gmail.model.Filter;
 import com.google.api.services.gmail.model.Label;
 import com.google.api.services.gmail.model.ListFiltersResponse;
 import fr.docjyJ.googleTransfer.api.Utils.GoogleTransfer;
-import fr.docjyJ.googleTransfer.api.Utils.IdKeyElement;
+import fr.docjyJ.googleTransfer.api.Utils.TemplateObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ import java.util.Map;
 public class GmailElement extends GoogleTransfer {
     //ELEMENT
     protected transient Gmail service;
-    protected List<IdKeyElement> labels;
-    protected List<IdKeyElement> filters;
+    protected List<TemplateObject<Label>> labels;
+    protected List<TemplateObject<Filter>> filters;
     protected transient Map<String,String> labelCorrection;
 
     //CONSTRUCTOR
@@ -37,7 +37,7 @@ public class GmailElement extends GoogleTransfer {
                 .getLabels()) {
             if(label.getType().equals("user")) {
                 logPrint("READ", "label", label.getName());
-                this.labels.add(new IdKeyElement(
+                this.labels.add(new TemplateObject<>(
                         label.getId(),
                         label.getName(),
                         new Label()
@@ -58,7 +58,7 @@ public class GmailElement extends GoogleTransfer {
         if(request.getFilter() != null)
             for (Filter filter : request.getFilter()) {
                 logPrint("READ", "filter",filter.getCriteria().toString()+">"+filter.getAction().toString());
-                this.filters.add(new IdKeyElement(
+                this.filters.add(new TemplateObject<>(
                         filter.getId(),
                         filter.getCriteria().toString()+">"+filter.getAction().toString(),
                         new Filter()
@@ -72,40 +72,38 @@ public class GmailElement extends GoogleTransfer {
     public GmailElement putAll(GmailElement data) throws IOException {
         return this.putLabels(data.getLabels()).putFilters(data.getFilters());
     }
-    public GmailElement putLabels(List<IdKeyElement> data) throws IOException {
+    public GmailElement putLabels(List<TemplateObject<Label>> data) throws IOException {
         this.labelCorrection = new ArrayMap<>();
-        for (IdKeyElement label: data) {
+        for (TemplateObject<Label> label: data) {
             logPrint("PUT", "label",label.getName());
             this.labelCorrection.put(
                     label.getId(),
                     service.users().labels()
-                            .create("me", (Label) label.getObject())
+                            .create("me", label.getObject())
                             .execute()
                             .getId()
             );
         }
         return this;
     }
-    public GmailElement putFilters(List<IdKeyElement> data) throws IOException {
-        for (IdKeyElement filter: data) {
+    public GmailElement putFilters(List<TemplateObject<Filter>> data) throws IOException {
+        for (TemplateObject<Filter> filter: data) {
             logPrint("PUT", "filter",filter.getName());
             service.users().settings().filters()
-                    .create("me", (Filter) filter.getObject())
+                    .create("me", filter.getObject())
                     .execute();
         }
         return this;
     }
 
-
-
     //GET
     public Gmail getService() {
         return service;
     }
-    public List<IdKeyElement> getLabels() {
+    public List<TemplateObject<Label>> getLabels() {
         return labels;
     }
-    public List<IdKeyElement> getFilters() {
+    public List<TemplateObject<Filter>> getFilters() {
         return filters;
     }
 }

@@ -3,7 +3,8 @@ package fr.docjyJ.googleTransfer.api.Services.youtube;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;
 import fr.docjyJ.googleTransfer.api.Utils.GoogleTransfer;
-import fr.docjyJ.googleTransfer.api.Utils.IdKeyElement;
+import fr.docjyJ.googleTransfer.api.Utils.TemplateObject;
+import fr.docjyJ.googleTransfer.api.Utils.TemplateObjectContent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,10 +13,10 @@ import java.util.List;
 public class YoutubeElement extends GoogleTransfer {
     //ELEMENT
     protected transient YouTube service;
-    protected List<IdKeyElement> likes;
-    protected List<IdKeyElement> dislikes;
-    protected List<IdKeyElement> subscriptions;
-    protected List<IdKeyElement> playlists;
+    protected List<TemplateObject<String>> likes;
+    protected List<TemplateObject<String>> dislikes;
+    protected List<TemplateObject<Subscription>> subscriptions;
+    protected List<TemplateObjectContent<Playlist,PlaylistItem>> playlists;
 
     //CONSTRUCTOR
     public YoutubeElement(YouTube service) {
@@ -38,7 +39,7 @@ public class YoutubeElement extends GoogleTransfer {
                     .execute();
             for( Video value : request.getItems()) {
                 logPrint("READ","like",value.getSnippet().getTitle());
-                this.likes.add(new IdKeyElement(
+                this.likes.add(new TemplateObject<>(
                         value.getId(),
                         value.getSnippet().getTitle(),
                         value.getId()));
@@ -58,7 +59,7 @@ public class YoutubeElement extends GoogleTransfer {
                     .execute();
             for( Video value : request.getItems()) {
                 logPrint("READ","dislike",value.getSnippet().getTitle());
-                this.dislikes.add(new IdKeyElement(
+                this.dislikes.add(new TemplateObject<>(
                         value.getId(),
                         value.getSnippet().getTitle(),
                         value.getId()));
@@ -78,7 +79,7 @@ public class YoutubeElement extends GoogleTransfer {
                     .execute();
             for (Subscription value : request.getItems()) {
                 logPrint("READ","subscription",value.getSnippet().getTitle());
-                this.subscriptions.add(new IdKeyElement(
+                this.subscriptions.add(new TemplateObject<>(
                         value.getSnippet().getResourceId().getChannelId(),
                         value.getSnippet().getTitle(),
                         new Subscription().setSnippet(
@@ -101,7 +102,7 @@ public class YoutubeElement extends GoogleTransfer {
                     .execute();
             for( Playlist value : request.getItems()) {
                 logPrint("READ", "playlist",value.getSnippet().getTitle());
-                List<IdKeyElement> content = new ArrayList<>();
+                List<TemplateObject<PlaylistItem>> content = new ArrayList<>();
                 PlaylistItemListResponse request2 = new PlaylistItemListResponse().setNextPageToken(" ");
                 while (request2.getNextPageToken()!=null && !request2.getNextPageToken().isEmpty()){
                     request2 = this.service.playlistItems()
@@ -113,7 +114,7 @@ public class YoutubeElement extends GoogleTransfer {
                     for( PlaylistItem value2 : request2.getItems()) {
                         logPrint("READ", "playlist",value.getSnippet().getTitle(),
                                 value2.getSnippet().getTitle());
-                        content.add(new IdKeyElement(
+                        content.add(new TemplateObject<>(
                                 value2.getId(),
                                 value2.getSnippet().getTitle(),
                                 new PlaylistItem().setSnippet(
@@ -122,7 +123,7 @@ public class YoutubeElement extends GoogleTransfer {
                                                 .setResourceId(value2.getSnippet().getResourceId()))));
                     }
                 }
-                this.playlists.add(new IdKeyElement(
+                this.playlists.add(new TemplateObjectContent<>(
                         value.getId(),
                         value.getSnippet().getTitle(),
                         new Playlist()
@@ -147,38 +148,40 @@ public class YoutubeElement extends GoogleTransfer {
                 .putSubscriptions(data.subscriptions)
                 .putPlaylist(data.playlists);
     }
-    public YoutubeElement putLike(List<IdKeyElement> data) throws IOException {
-        for (IdKeyElement value :data) {
+    public YoutubeElement putLike(List<TemplateObject<String>> data) throws IOException {
+        for (TemplateObject<String> value :data) {
             logPrint("PUT","like",value.getName());
-            service.videos().rate((String) value.getObject(), "like").execute();
+            service.videos().rate(value.getObject(), "like").execute();
         }
         return this;
     }
-    public YoutubeElement putDislike(List<IdKeyElement> data) throws IOException {
-        for (IdKeyElement value :data) {
+    public YoutubeElement putDislike(List<TemplateObject<String>> data) throws IOException {
+        for (TemplateObject<String> value :data) {
             logPrint("PUT","dislike",value.getName());
-            service.videos().rate((String) value.getObject(), "dislike").execute();
+            service.videos().rate(value.getObject(), "dislike").execute();
         }
         return this;
     }
-    public YoutubeElement putSubscriptions(List<IdKeyElement> data) throws IOException {
-        for (IdKeyElement value :data) {
+    public YoutubeElement putSubscriptions(List<TemplateObject<Subscription>> data) throws IOException {
+        for (TemplateObject<Subscription> value :data) {
             logPrint("PUT","subscription",value.getName());
-            service.subscriptions().insert("snippet", (Subscription) value.getObject()).execute();
+            service.subscriptions().insert("snippet", value.getObject()).execute();
         }
         return this;
     }
-    public YoutubeElement putPlaylist(List<IdKeyElement> data) throws IOException {
-        for (IdKeyElement playlist: data) {
+    public YoutubeElement putPlaylist(List<TemplateObjectContent<Playlist,PlaylistItem>> data) throws IOException {
+        for (TemplateObjectContent<Playlist,PlaylistItem> playlist: data) {
             logPrint("PUT", "playlist", playlist.getName());
             String id = service.playlists()
-                    .insert("snippet,status", (Playlist) playlist.getObject())
+                    .insert("snippet,status", playlist.getObject())
                     .execute()
                     .getId();
-            for (IdKeyElement item :playlist.getContent()){
-                logPrint("READ", "playlist",playlist.getName(),item.getName());
+            for (TemplateObject<PlaylistItem> item :playlist.getContent()){
+                logPrint("PUT", "playlist",playlist.getName(),item.getName());
+                PlaylistItem temp = item.getObject();
+                temp.getSnippet().setPlaylistId(id);
                 service.playlistItems()
-                        .insert("snippet", (PlaylistItem) item.getObject())
+                        .insert("snippet", temp)
                         .execute();
             }
         }
@@ -189,16 +192,16 @@ public class YoutubeElement extends GoogleTransfer {
     public YouTube getService() {
         return service;
     }
-    public List<IdKeyElement> getLikes() {
+    public List<TemplateObject<String>> getLikes() {
         return likes;
     }
-    public List<IdKeyElement> getDislikes() {
+    public List<TemplateObject<String>> getDislikes() {
         return dislikes;
     }
-    public List<IdKeyElement> getSubscriptions() {
+    public List<TemplateObject<Subscription>> getSubscriptions() {
         return subscriptions;
     }
-    public List<IdKeyElement> getPlaylists() {
+    public List<TemplateObjectContent<Playlist,PlaylistItem>> getPlaylists() {
         return playlists;
     }
 }
